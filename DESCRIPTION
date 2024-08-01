@@ -1,0 +1,17 @@
+Package: terraclivaviz
+License: GPL (>= 3)
+Title: Climate Vatriability tools (Visualization)
+Type: Package
+Authors@R: c(person(given="Emanuele",family="Cordano",role = c("aut","cre"),email = "emanuele.cordano@gmail.com"))
+Description: Data and information visualization of Climate Variability Analysis with spatio-temporal gridded coverages (terracliva)
+Version: 0.0.1
+Date: 2024-01-08
+Repository: CRAN
+Depends: tidyterra,terracliva,lmomPi
+Imports: stringr,ggplot2,xml2,RColorBrewer
+Enhances:	sf
+Suggests: terra,lubridate
+RoxygenNote: 7.3.2
+NeedsCompilation: no
+Packaged: 2017-11-28 15:32:55 UTC; cordaem
+Date/Publication: 2017-11-29 14:31:45 UTC
