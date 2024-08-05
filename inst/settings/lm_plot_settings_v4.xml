@@ -80,4 +80,20 @@
         <rev>1</rev>
         <code_fun>hwmid</code_fun>
     </record>
+    <record>
+        <id>dryspell_year</id>
+        <particular_id>year</particular_id>
+        <name>dryspell value</name>
+        <colorscale>YlOrRd</colorscale>
+        <rev>1</rev>
+        <code_fun>dryspell</code_fun>
+    </record>
+    <record>
+        <id>dryspell_regress</id>
+        <particular_id>regress</particular_id>
+        <name>dryspell regress</name>
+        <colorscale>YlOrRd</colorscale>
+        <rev>1</rev>
+        <code_fun>dryspell</code_fun>
+    </record>
 </records_function>
