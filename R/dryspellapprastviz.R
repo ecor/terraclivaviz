@@ -8,7 +8,8 @@ NULL
 #' @param filenames vector or string for names of the output files (plots) 
 #' @param settings xml files for plotting settings (see internal code)
 #' @param fun_aggr character aggregation function name, used as name prefixes in namaing \code{x}'s layers  (see \code{\link{dryspellcliva}} and \code{\link{dryspellapprast}})
-#' @param summary_suffixes suffixes used for summay/regression functions (see \code{\link{regress}})
+#' @param summary_suffixes suffixes used for summary/regression functions (see \code{\link{regress}})
+#' @param mask logical If it is \code{TRUE} only the area within the \code{sf} shape is visualized. Default is \code{FALSE}
 #' @param ... further arguments passed to \code{\link{ggsave}}
 #'
 #' 
@@ -16,7 +17,7 @@ NULL
 #'
 #' 
 #' @importFrom stringr str_replace_all str_replace
-#' 
+#' @importFrom terra vect mask
 #' @examples
 #' 
 #' library(sf)
@@ -25,12 +26,16 @@ NULL
 #' dataset_path <- "/home/ecor/local/rpackages/jrc/terracliva/inst/ext_data/precipitation"
 #' dataset_path <- system.file("ext_data/precipitation",package="terracliva")
 #' dataset_daily <- "%s/daily/chirps_daily_goma_%04d.grd" %>% sprintf(dataset_path,years) %>% rast()
-#' dataset_sf <- system.file("ext_data/OSM_Goma_quartiers_210527.shp",package="terracliva") %>% st_read()
+#' dataset_sf <- system.file(
+#' "ext_data/OSM_Goma_quartiers_210527.shp",package="terracliva") %>% 
+#' st_read()
 #' filename_dry_spell <- "/home/ecor/local/rpackages/jrc/terraclivaviz/inst/ext_data/goma_dry_spell.tif"
 #'
 #' fun_aggr=aggr_fun_suffixes()
 #' if (!file.exists(filename_dry_spell)) {
-#'   out <- dryspellapprast(dataset_daily,valmin=1,filename=filename_dry_spell,summary_regress=TRUE,fun_aggr=fun_aggr,overwrite=TRUE)
+#'   out <- dryspellapprast(dataset_daily,
+#'   valmin=1,filename=filename_dry_spell,
+#'   summary_regress=TRUE,fun_aggr=fun_aggr,overwrite=TRUE)
 #' } else {
 #'   out <- rast(filename_dry_spell)
 #' }
@@ -45,13 +50,13 @@ NULL
 
 
 
-dryspellapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_settings_v4.xml",package="terraclivaviz"),fun_aggr=terracliva::aggr_fun_suffixes(),summary_suffixes=c("pvalue","coeff","stdrerror","rsquared","senslope","pvalue_mk"),...){
+dryspellapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_settings_v4.xml",package="terraclivaviz"),fun_aggr=terracliva::aggr_fun_suffixes(),summary_suffixes=c("pvalue","coeff","stdrerror","rsquared","senslope","pvalue_mk"),mask=FALSE,...){
   
   ## TO DO 
   #### https://en.wikipedia.org/wiki/Data_and_information_visualization
   ##stop("FUNCTION_TO_DO")
   code_fun <- "dryspell"
-  
+  if (mask==TRUE) x <- mask(x,mask=vect(sf)) ## added on 2024 10 04
   if (is.character(settings)) {
     xml_settings <- settings
     settings <- read_xml(xml_settings)

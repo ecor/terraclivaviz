@@ -8,6 +8,8 @@ NULL
 #' @param filenames vector or string for names of the output files (plots) 
 #' @param distrib see \code{\link{pel}}
 #' @param settings xml files for plotting settings (see internal code)
+#' @param mask logical If it is \code{TRUE} only the area within the \code{sf} shape is visualized. Default is \code{FALSE}
+
 #' @param ... further arguments passed to \code{\link{ggsave}}
 #'
 #' 
@@ -69,13 +71,13 @@ NULL
 
 
 
-lmapprastviz <- function(x,filenames,sf,distrib=eval(formals(lmomPi::pel)$distrib),settings=system.file("settings/lm_plot_settings_v4.xml",package="terraclivaviz"),...){
+lmapprastviz <- function(x,filenames,sf,distrib=eval(formals(lmomPi::pel)$distrib),settings=system.file("settings/lm_plot_settings_v4.xml",package="terraclivaviz"),mask=FALSE,...){
   
   ## TO DO 
   #### https://en.wikipedia.org/wiki/Data_and_information_visualization
   
   code_fun <- "lm"
-  
+  if (mask==TRUE) x <- mask(x,mask=vect(sf)) ## added on 2024 10 04
   if (is.character(settings)) {
     xml_settings <- settings
     settings <- read_xml(xml_settings)

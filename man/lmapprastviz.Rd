@@ -10,6 +10,7 @@ lmapprastviz(
   sf,
   distrib = eval(formals(lmomPi::pel)$distrib),
   settings = system.file("settings/lm_plot_settings_v4.xml", package = "terraclivaviz"),
+  mask = FALSE,
   ...
 )
 }
@@ -23,6 +24,8 @@ lmapprastviz(
 \item{distrib}{see \code{\link{pel}}}
 
 \item{settings}{xml files for plotting settings (see internal code)}
+
+\item{mask}{logical If it is \code{TRUE} only the area within the \code{sf} shape is visualized. Default is \code{FALSE}}
 
 \item{...}{further arguments passed to \code{\link{ggsave}}}
 }

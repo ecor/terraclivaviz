@@ -9,6 +9,7 @@ hwmidapprastviz(
   filenames,
   sf,
   settings = system.file("settings/lm_plot_settings_v4.xml", package = "terraclivaviz"),
+  mask = FALSE,
   ...
 )
 }
@@ -20,6 +21,8 @@ hwmidapprastviz(
 \item{sf}{an \code{sf} object which will be added to the plotted maps.}
 
 \item{settings}{xml files for plotting settings (see internal code)}
+
+\item{mask}{logical If it is \code{TRUE} only the area within the \code{sf} shape is visualized. Default is \code{FALSE}}
 
 \item{...}{further arguments passed to \code{\link{ggsave}}}
 }
@@ -34,8 +37,10 @@ Heat and Cold waves analysis in Spatial Gridded Coverage (visualization)
 library(sf)
 years <- 1983:2016
 tmax_dataset_path <- system.file("ext_data/tmax",package="terracliva")
-tmax_dataset_daily <- "\%s/daily/chirts_daily_goma_tmax_\%04d.grd" \%>\% sprintf(tmax_dataset_path,years) \%>\% rast()
-dataset_sf <- system.file("ext_data/OSM_Goma_quartiers_210527.shp",package="terracliva") \%>\% st_read()
+tmax_dataset_daily <- "\%s/daily/chirts_daily_goma_tmax_\%04d.grd" \%>\% 
+sprintf(tmax_dataset_path,years) \%>\% rast()
+dataset_sf <- system.file("ext_data/OSM_Goma_quartiers_210527.shp"
+,package="terracliva") \%>\% st_read()
 
 
 o_hw_regress <- hwmidapprast(tmax_dataset_daily,summary_regress=TRUE)

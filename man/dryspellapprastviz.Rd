@@ -12,6 +12,7 @@ dryspellapprastviz(
   fun_aggr = terracliva::aggr_fun_suffixes(),
   summary_suffixes = c("pvalue", "coeff", "stdrerror", "rsquared", "senslope",
     "pvalue_mk"),
+  mask = FALSE,
   ...
 )
 }
@@ -26,7 +27,9 @@ dryspellapprastviz(
 
 \item{fun_aggr}{character aggregation function name, used as name prefixes in namaing \code{x}'s layers  (see \code{\link{dryspellcliva}} and \code{\link{dryspellapprast}})}
 
-\item{summary_suffixes}{suffixes used for summay/regression functions (see \code{\link{regress}})}
+\item{summary_suffixes}{suffixes used for summary/regression functions (see \code{\link{regress}})}
+
+\item{mask}{logical If it is \code{TRUE} only the area within the \code{sf} shape is visualized. Default is \code{FALSE}}
 
 \item{...}{further arguments passed to \code{\link{ggsave}}}
 }
@@ -41,12 +44,16 @@ years <- 1982:2023
 dataset_path <- "/home/ecor/local/rpackages/jrc/terracliva/inst/ext_data/precipitation"
 dataset_path <- system.file("ext_data/precipitation",package="terracliva")
 dataset_daily <- "\%s/daily/chirps_daily_goma_\%04d.grd" \%>\% sprintf(dataset_path,years) \%>\% rast()
-dataset_sf <- system.file("ext_data/OSM_Goma_quartiers_210527.shp",package="terracliva") \%>\% st_read()
+dataset_sf <- system.file(
+"ext_data/OSM_Goma_quartiers_210527.shp",package="terracliva") \%>\% 
+st_read()
 filename_dry_spell <- "/home/ecor/local/rpackages/jrc/terraclivaviz/inst/ext_data/goma_dry_spell.tif"
 
 fun_aggr=aggr_fun_suffixes()
 if (!file.exists(filename_dry_spell)) {
-  out <- dryspellapprast(dataset_daily,valmin=1,filename=filename_dry_spell,summary_regress=TRUE,fun_aggr=fun_aggr,overwrite=TRUE)
+  out <- dryspellapprast(dataset_daily,
+  valmin=1,filename=filename_dry_spell,
+  summary_regress=TRUE,fun_aggr=fun_aggr,overwrite=TRUE)
 } else {
   out <- rast(filename_dry_spell)
 }
