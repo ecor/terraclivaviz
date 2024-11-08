@@ -45,7 +45,7 @@ NULL
 #' 
 #' out_yearly <- lmapprast(dataset_yearly)
 #' 
-#' filenames <- "/home/ecor/local/rpackages/jrc/terraclivaviz/inst/examples/plot/lm/yearly/lm_%s.jpg"
+#' filenames <- system.file(package="terraclivaviz") %>% file.path("examples/plot/lm/yearly/lm_%s.jpg")
 #' out_yearly_viz <- lmapprastviz(x=out_yearly,filenames,sf=dataset_sf)
 #' 
 #' 
@@ -58,7 +58,7 @@ NULL
 #' 
 #' out_monthly <- lmapprast(dataset_monthly,index="monthly",distrib="pe3")
 #' 
-#' filenames <- "/home/ecor/local/rpackages/jrc/terraclivaviz/inst/examples/plot/lm/monthly/lm_%s.jpg"
+#' filenames <- system.file(package="terraclivaviz") %>% file.path("examples/plot/lm/monthly/lm_%s.jpg")
 #' out_monthly_viz <- lmapprastviz(x=out_monthly,filenames,sf=dataset_sf)
 #' 
 
@@ -77,7 +77,11 @@ lmapprastviz <- function(x,filenames,sf,distrib=eval(formals(lmomPi::pel)$distri
   #### https://en.wikipedia.org/wiki/Data_and_information_visualization
   
   code_fun <- "lm"
-  if (mask==TRUE) x <- mask(x,mask=vect(sf)) ## added on 2024 10 04
+  if (mask==TRUE){ 
+    x <- mask(x,mask=vect(sf)) ## added on 2024 10 04
+    EE = ext(vect(sf))
+    x <- crop(x,EE)
+  }
   if (is.character(settings)) {
     xml_settings <- settings
     settings <- read_xml(xml_settings)
