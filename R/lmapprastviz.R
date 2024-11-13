@@ -71,7 +71,7 @@ NULL
 
 
 
-lmapprastviz <- function(x,filenames,sf,distrib=eval(formals(lmomPi::pel)$distrib),settings=system.file("settings/lm_plot_settings_v4.xml",package="terraclivaviz"),mask=FALSE,...){
+lmapprastviz <- function(x,filenames,sf,distrib=eval(formals(lmomPi::pel)$distrib),settings=system.file("settings/lm_plot_settings_v4.xml",package="terraclivaviz"),mask=FALSE,write_tif=FALSE,...){
   
   ## TO DO 
   #### https://en.wikipedia.org/wiki/Data_and_information_visualization
@@ -140,6 +140,13 @@ lmapprastviz <- function(x,filenames,sf,distrib=eval(formals(lmomPi::pel)$distri
   if (length(filenames)==1) filenames <- sprintf(filenames,names(x))
   names(filenames) <- names(x)
   for (it in names(x)) {
+    if (write_tif) {
+      
+      filename_tif <- filename
+      extansion(filename_tif) <- ".tif"
+      writeRaster(x[[it]],filename=filename_it,overwrite=TRUE)
+      
+    }
     ####it2 <<- it
     gg  <- ggplot()+geom_spatraster(data=x[[it]])+theme_bw()
     gg <-  gg+geom_sf(data=sf,fill=NA,color="black",linewidth=0.15)

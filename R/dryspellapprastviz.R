@@ -100,6 +100,17 @@ dryspellapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_
   names(filenames) <- names(x)
   for (it in names(x)) {
     ####it2 <<- it
+    if (write_tif) {
+      
+      filename_tif <- filename
+      extansion(filename_tif) <- ".tif"
+      writeRaster(x[[it]],filename=filename_it,overwrite=TRUE)
+      
+    }
+    
+    
+    
+    
     gg  <- ggplot()+geom_spatraster(data=x[[it]])+theme_bw()
     gg <-  gg+geom_sf(data=sf,fill=NA,color="black",linewidth=0.15)
     gg <- gg+ggtitle(it)
