@@ -50,7 +50,7 @@ dataset_sf <- system.file("ext_data/OSM_Goma_quartiers_210527.shp",package="terr
 
 out_yearly <- lmapprast(dataset_yearly)
 
-filenames <- "/home/ecor/local/rpackages/jrc/terraclivaviz/inst/examples/plot/lm/yearly/lm_\%s.jpg"
+filenames <- system.file(package="terraclivaviz") \%>\% file.path("examples/plot/lm/yearly/lm_\%s.jpg")
 out_yearly_viz <- lmapprastviz(x=out_yearly,filenames,sf=dataset_sf)
 
 
@@ -63,7 +63,7 @@ time(dataset_monthly) <-  names(dataset_monthly) \%>\% paste0("_01") \%>\% as.Da
 
 out_monthly <- lmapprast(dataset_monthly,index="monthly",distrib="pe3")
 
-filenames <- "/home/ecor/local/rpackages/jrc/terraclivaviz/inst/examples/plot/lm/monthly/lm_\%s.jpg"
+filenames <- system.file(package="terraclivaviz") \%>\% file.path("examples/plot/lm/monthly/lm_\%s.jpg")
 out_monthly_viz <- lmapprastviz(x=out_monthly,filenames,sf=dataset_sf)
 
 }

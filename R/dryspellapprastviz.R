@@ -17,19 +17,18 @@ NULL
 #'
 #' 
 #' @importFrom stringr str_replace_all str_replace
-#' @importFrom terra vect mask
+#' @importFrom terra vect mask ext crop
 #' @examples
 #' 
 #' library(sf)
 #'
 #' years <- 1982:2023
-#' dataset_path <- "/home/ecor/local/rpackages/jrc/terracliva/inst/ext_data/precipitation"
 #' dataset_path <- system.file("ext_data/precipitation",package="terracliva")
 #' dataset_daily <- "%s/daily/chirps_daily_goma_%04d.grd" %>% sprintf(dataset_path,years) %>% rast()
 #' dataset_sf <- system.file(
 #' "ext_data/OSM_Goma_quartiers_210527.shp",package="terracliva") %>% 
 #' st_read()
-#' filename_dry_spell <- "/home/ecor/local/rpackages/jrc/terraclivaviz/inst/ext_data/goma_dry_spell.tif"
+#' filename_dry_spell <- system.file("ext_data/goma_dry_spell.tif",package="terraclivaviz")
 #'
 #' fun_aggr=aggr_fun_suffixes()
 #' if (!file.exists(filename_dry_spell)) {
@@ -42,7 +41,7 @@ NULL
 #'
 #'
 #'
-#' filenames <- "/home/ecor/local/rpackages/jrc/terraclivaviz/inst/examples/plot/dryspell/dryspell_%s.jpg"
+#' filenames <- system.file(package="terraclivaviz") %>% file.path("examples/plot/dryspell/dryspell_%s.jpg")
 #' out2 <- dryspellapprastviz(out,sf=dataset_sf,filenames=filenames)
 #'
 #'
@@ -56,7 +55,11 @@ dryspellapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_
   #### https://en.wikipedia.org/wiki/Data_and_information_visualization
   ##stop("FUNCTION_TO_DO")
   code_fun <- "dryspell"
-  if (mask==TRUE) x <- mask(x,mask=vect(sf)) ## added on 2024 10 04
+  if (mask==TRUE){ 
+    x <- mask(x,mask=vect(sf)) ## added on 2024 10 04
+    EE = ext(vect(sf))
+    x <- crop(x,EE)
+  }
   if (is.character(settings)) {
     xml_settings <- settings
     settings <- read_xml(xml_settings)

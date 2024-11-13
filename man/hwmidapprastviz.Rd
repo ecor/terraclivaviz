@@ -45,7 +45,7 @@ dataset_sf <- system.file("ext_data/OSM_Goma_quartiers_210527.shp"
 
 o_hw_regress <- hwmidapprast(tmax_dataset_daily,summary_regress=TRUE)
 
-filenames <- "/home/ecor/local/rpackages/jrc/terraclivaviz/inst/examples/plot/hwmid/hwmid_\%s.jpg"
+filenames <- system.file(package="terraclivaviz") \%>\% file.path("examples/plot/hwmid/hwmid_\%s.jpg")
 out_hw_regress_viz <- hwmidapprastviz(x=o_hw_regress,filenames,sf=dataset_sf)
 
 }

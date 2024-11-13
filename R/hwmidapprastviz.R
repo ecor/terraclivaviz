@@ -31,7 +31,7 @@ NULL
 #'
 #' o_hw_regress <- hwmidapprast(tmax_dataset_daily,summary_regress=TRUE)
 #'
-#' filenames <- "/home/ecor/local/rpackages/jrc/terraclivaviz/inst/examples/plot/hwmid/hwmid_%s.jpg"
+#' filenames <- system.file(package="terraclivaviz") %>% file.path("examples/plot/hwmid/hwmid_%s.jpg")
 #' out_hw_regress_viz <- hwmidapprastviz(x=o_hw_regress,filenames,sf=dataset_sf)
 #' 
 
@@ -46,7 +46,11 @@ hwmidapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plo
   
   ## TO DO 
   #### https://en.wikipedia.org/wiki/Data_and_information_visualization
-  if (mask==TRUE) x <- mask(x,mask=vect(sf)) ## added on 2024 10 04
+  if (mask==TRUE){ 
+    x <- mask(x,mask=vect(sf)) ## added on 2024 10 04
+    EE = ext(vect(sf))
+    x <- crop(x,EE)
+  }
   code_fun <- "hwmid"
   
   if (is.character(settings)) {
