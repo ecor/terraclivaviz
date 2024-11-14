@@ -10,6 +10,7 @@ hwmidapprastviz(
   sf,
   settings = system.file("settings/lm_plot_settings_v4.xml", package = "terraclivaviz"),
   mask = FALSE,
+  write_tif = FALSE,
   ...
 )
 }
@@ -23,6 +24,8 @@ hwmidapprastviz(
 \item{settings}{xml files for plotting settings (see internal code)}
 
 \item{mask}{logical If it is \code{TRUE} only the area within the \code{sf} shape is visualized. Default is \code{FALSE}}
+
+\item{write_tif}{logical. Default is \code{FALSE}. If \code{TRUE}, results are also written and saved as GeoTiff raster files.}
 
 \item{...}{further arguments passed to \code{\link{ggsave}}}
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/dryspellapprastviz.R
 \name{dryspellapprastviz}
 \alias{dryspellapprastviz}
-\title{Heat and Cold waves analysis in Spatial Gridded Coverage (visualization)}
+\title{Dry Spell Analysis in Spatial Gridded Coverage (visualization)}
 \usage{
 dryspellapprastviz(
   x,
@@ -13,6 +13,7 @@ dryspellapprastviz(
   summary_suffixes = c("pvalue", "coeff", "stdrerror", "rsquared", "senslope",
     "pvalue_mk"),
   mask = FALSE,
+  write_tif = FALSE,
   ...
 )
 }
@@ -31,10 +32,12 @@ dryspellapprastviz(
 
 \item{mask}{logical If it is \code{TRUE} only the area within the \code{sf} shape is visualized. Default is \code{FALSE}}
 
+\item{write_tif}{logical. Default is \code{FALSE}. If \code{TRUE}, results are also written and saved as GeoTiff raster files.}
+
 \item{...}{further arguments passed to \code{\link{ggsave}}}
 }
 \description{
-Heat and Cold waves analysis in Spatial Gridded Coverage (visualization)
+Dry Spell Analysis in Spatial Gridded Coverage (visualization)
 }
 \examples{
 
@@ -59,9 +62,10 @@ if (!file.exists(filename_dry_spell)) {
 
 
 
-filenames <- system.file(package="terraclivaviz") \%>\% file.path("examples/plot/dryspell/dryspell_\%s.jpg")
-out2 <- dryspellapprastviz(out,sf=dataset_sf,filenames=filenames)
+filedir <- system.file(package="terraclivaviz") \%>\% file.path("examples/plot/dryspell/")
+filenames <- paste0(filedir,"dryspell_\%s.jpg")
+out2 <- dryspellapprastviz(out,sf=dataset_sf,filenames=filenames,write_tif=TRUE)
 
-
+uu <- list.files(filedir,full.names=TRUE)
 
 }

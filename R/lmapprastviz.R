@@ -9,7 +9,7 @@ NULL
 #' @param distrib see \code{\link{pel}}
 #' @param settings xml files for plotting settings (see internal code)
 #' @param mask logical If it is \code{TRUE} only the area within the \code{sf} shape is visualized. Default is \code{FALSE}
-
+#' @param write_tif logical. Default is \code{FALSE}. If \code{TRUE}, results are also written and saved as GeoTiff raster files.
 #' @param ... further arguments passed to \code{\link{ggsave}}
 #'
 #' 
@@ -28,7 +28,7 @@ NULL
 #'
 #' @note \code{x} must have the proper time aggregation for the analysis before the execution of this function.
 #' 
-#' 
+#' @importFrom raster extension
 #' 
 #' @examples
 #' 
@@ -144,13 +144,7 @@ lmapprastviz <- function(x,filenames,sf,distrib=eval(formals(lmomPi::pel)$distri
   if (length(filenames)==1) filenames <- sprintf(filenames,names(x))
   names(filenames) <- names(x)
   for (it in names(x)) {
-    if (write_tif) {
-      
-      filename_tif <- filename
-      extansion(filename_tif) <- ".tif"
-      writeRaster(x[[it]],filename=filename_it,overwrite=TRUE)
-      
-    }
+   
     ####it2 <<- it
     gg  <- ggplot()+geom_spatraster(data=x[[it]])+theme_bw()
     gg <-  gg+geom_sf(data=sf,fill=NA,color="black",linewidth=0.15)
@@ -167,7 +161,13 @@ lmapprastviz <- function(x,filenames,sf,distrib=eval(formals(lmomPi::pel)$distri
     ggsave(filename=filename,plot=gg,...)
     
   
-    
+    if (write_tif) {
+      
+      filename_tif <- filename
+      raster::extension(filename_tif) <- ".tif"
+      writeRaster(x[[it]],filename=filename_tif,overwrite=TRUE)
+      
+    }
     
     
     

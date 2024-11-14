@@ -1,6 +1,6 @@
 NULL
 #' 
-#' Heat and Cold waves analysis in Spatial Gridded Coverage (visualization)
+#' Dry Spell Analysis in Spatial Gridded Coverage (visualization)
 #' 
 #'
 #' @param x a \code{SpatRast-Class} object returned by \code{\link{dryspellapprast}}. 
@@ -10,6 +10,7 @@ NULL
 #' @param fun_aggr character aggregation function name, used as name prefixes in namaing \code{x}'s layers  (see \code{\link{dryspellcliva}} and \code{\link{dryspellapprast}})
 #' @param summary_suffixes suffixes used for summary/regression functions (see \code{\link{regress}})
 #' @param mask logical If it is \code{TRUE} only the area within the \code{sf} shape is visualized. Default is \code{FALSE}
+#' @param write_tif logical. Default is \code{FALSE}. If \code{TRUE}, results are also written and saved as GeoTiff raster files.
 #' @param ... further arguments passed to \code{\link{ggsave}}
 #'
 #' 
@@ -18,6 +19,9 @@ NULL
 #' 
 #' @importFrom stringr str_replace_all str_replace
 #' @importFrom terra vect mask ext crop
+#' 
+#' 
+#' 
 #' @examples
 #' 
 #' library(sf)
@@ -41,15 +45,16 @@ NULL
 #'
 #'
 #'
-#' filenames <- system.file(package="terraclivaviz") %>% file.path("examples/plot/dryspell/dryspell_%s.jpg")
-#' out2 <- dryspellapprastviz(out,sf=dataset_sf,filenames=filenames)
+#' filedir <- system.file(package="terraclivaviz") %>% file.path("examples/plot/dryspell/")
+#' filenames <- paste0(filedir,"dryspell_%s.jpg")
+#' out2 <- dryspellapprastviz(out,sf=dataset_sf,filenames=filenames,write_tif=TRUE)
 #'
-#'
+#' uu <- list.files(filedir,full.names=TRUE)
 #'
 
 
 
-dryspellapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_settings_v4.xml",package="terraclivaviz"),fun_aggr=terracliva::aggr_fun_suffixes(),summary_suffixes=c("pvalue","coeff","stdrerror","rsquared","senslope","pvalue_mk"),mask=FALSE,...){
+dryspellapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_settings_v4.xml",package="terraclivaviz"),fun_aggr=terracliva::aggr_fun_suffixes(),summary_suffixes=c("pvalue","coeff","stdrerror","rsquared","senslope","pvalue_mk"),mask=FALSE,write_tif=FALSE,...){
   
   ## TO DO 
   #### https://en.wikipedia.org/wiki/Data_and_information_visualization
@@ -103,13 +108,7 @@ dryspellapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_
   names(filenames) <- names(x)
   for (it in names(x)) {
     ####it2 <<- it
-    if (write_tif) {
-      
-      filename_tif <- filename
-      extansion(filename_tif) <- ".tif"
-      writeRaster(x[[it]],filename=filename_it,overwrite=TRUE)
-      
-    }
+    
     
     
     
@@ -128,7 +127,14 @@ dryspellapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_
     filename=str_replace_all(filenames[it]," ","_")
     ggsave(filename=filename,plot=gg,...)
     
-  
+    if (write_tif) {
+      
+      filename_tif <- filename
+      print(filename_tif)
+      raster::extension(filename_tif) <- ".tif"
+      writeRaster(x[[it]],filename=filename_tif,overwrite=TRUE)
+      
+    }
     
     
     

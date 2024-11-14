@@ -8,7 +8,7 @@ NULL
 #' @param filenames vector or string for names of the output files (plots) 
 #' @param settings xml files for plotting settings (see internal code)
 #' @param mask logical If it is \code{TRUE} only the area within the \code{sf} shape is visualized. Default is \code{FALSE}
-
+#' @param write_tif logical. Default is \code{FALSE}. If \code{TRUE}, results are also written and saved as GeoTiff raster files.
 #' @param ... further arguments passed to \code{\link{ggsave}}
 #'
 #' 
@@ -17,6 +17,7 @@ NULL
 #' @note \code{x} must have the proper time aggregation for the analysis before the execution of this function.
 #' 
 #' @importFrom stringr str_replace_all
+#' @importFrom terra writeRaster
 #' 
 #' @examples
 #' 
@@ -42,7 +43,7 @@ NULL
 
 
 
-hwmidapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_settings_v4.xml",package="terraclivaviz"),mask=FALSE,...){
+hwmidapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_settings_v4.xml",package="terraclivaviz"),mask=FALSE,write_tif=FALSE,...){
   
   ## TO DO 
   #### https://en.wikipedia.org/wiki/Data_and_information_visualization
@@ -88,13 +89,7 @@ hwmidapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plo
   names(filenames) <- names(x)
   for (it in names(x)) {
     ####it2 <<- it
-    if (write_tif) {
-      
-      filename_tif <- filename
-      extansion(filename_tif) <- ".tif"
-      writeRaster(x[[it]],filename=filename_it,overwrite=TRUE)
-      
-    }
+    
     
     
     
@@ -112,7 +107,13 @@ hwmidapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plo
     filename=str_replace_all(filenames[it]," ","_")
     ggsave(filename=filename,plot=gg,...)
     
-  
+    if (write_tif) {
+      
+      filename_tif <- filename
+      raster::extension(filename_tif) <- ".tif"
+      writeRaster(x[[it]],filename=filename_tif,overwrite=TRUE)
+      
+    }
     
     
     
