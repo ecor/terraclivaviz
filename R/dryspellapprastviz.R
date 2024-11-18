@@ -54,7 +54,7 @@ NULL
 
 
 
-dryspellapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_settings_v4.xml",package="terraclivaviz"),fun_aggr=terracliva::aggr_fun_suffixes(),summary_suffixes=c("pvalue","coeff","stdrerror","rsquared","senslope","pvalue_mk"),mask=FALSE,write_tif=FALSE,...){
+dryspellapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_settings_enexus.xml",package="terraclivaviz"),fun_aggr=terracliva::aggr_fun_suffixes(),summary_suffixes=c("pvalue","coeff","stdrerror","rsquared","senslope","pvalue_mk"),mask=FALSE,write_tif=FALSE,...){
   
   ## TO DO 
   #### https://en.wikipedia.org/wiki/Data_and_information_visualization

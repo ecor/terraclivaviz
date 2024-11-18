@@ -71,7 +71,7 @@ NULL
 
 
 
-lmapprastviz <- function(x,filenames,sf,distrib=eval(formals(lmomPi::pel)$distrib),settings=system.file("settings/lm_plot_settings_v4.xml",package="terraclivaviz"),mask=FALSE,write_tif=FALSE,...){
+lmapprastviz <- function(x,filenames,sf,distrib=eval(formals(lmomPi::pel)$distrib),settings=system.file("settings/lm_plot_settings_enexus.xml",package="terraclivaviz"),mask=FALSE,write_tif=FALSE,...){
   
   ## TO DO 
   #### https://en.wikipedia.org/wiki/Data_and_information_visualization
