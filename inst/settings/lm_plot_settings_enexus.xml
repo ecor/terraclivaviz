@@ -3,7 +3,7 @@
     <record>
         <id>lm_l_1</id>
         <particular_id>l_1</particular_id>
-        <name>L-Mean(1stL-Moment)</name>
+        <name>L-Mean(1st L-Moment)</name>
         <colorscale>YlGnBu</colorscale>
         <rev>1</rev>
         <code_fun>lm</code_fun>
@@ -11,7 +11,7 @@
     <record>
         <id>lm_l_2</id>
         <particular_id>l_2</particular_id>
-        <name>L-Variance(2stL-Moment)</name>
+        <name>L-Variance(2nd L-Moment)</name>
         <colorscale>YlGnBu</colorscale>
         <rev>1</rev>
         <code_fun>lm</code_fun>
@@ -19,7 +19,7 @@
     <record>
         <id>lm_t</id>
         <particular_id>t</particular_id>
-        <name>L-CV(2stL-Momentt)</name>
+        <name>L-CV(2nd L-Moment t)</name>
         <colorscale>YlGnBu</colorscale>
         <rev>1</rev>
         <code_fun>lm</code_fun>
@@ -27,7 +27,7 @@
     <record>
         <id>lm_t_3</id>
         <particular_id>t_3</particular_id>
-        <name>L-skewness(3rd-Momentt_3)</name>
+        <name>L-skewness(3rd L-Moment t_3)</name>
         <colorscale>YlGnBu</colorscale>
         <rev>1</rev>
         <code_fun>lm</code_fun>
@@ -35,7 +35,7 @@
     <record>
         <id>lm_t_4</id>
         <particular_id>t_4</particular_id>
-        <name>L-kurtosis(4rd-Momentt_4)</name>
+        <name>L-kurtosis(4rd L-Moment t_4)</name>
         <colorscale>YlGnBu</colorscale>
         <rev>1</rev>
         <code_fun>lm</code_fun>
@@ -43,7 +43,7 @@
     <record>
         <id>lm_distrib</id>
         <particular_id>distrib</particular_id>
-        <name>L-kurtosis(4rd-Momentt_4)</name>
+        <name></name>
         <colorscale>YlGnBu</colorscale>
         <rev>1</rev>
         <code_fun>lm</code_fun>
@@ -67,7 +67,7 @@
   <record>
         <id>hwmid_year</id>
         <particular_id>year</particular_id>
-        <name>hwmid value</name>
+        <name></name>
         <colorscale>YlOrRd</colorscale>
         <rev>1</rev>
         <code_fun>hwmid</code_fun>
