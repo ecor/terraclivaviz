@@ -9,7 +9,8 @@ lmapprastviz(
   filenames,
   sf,
   distrib = eval(formals(lmomPi::pel)$distrib),
-  settings = system.file("settings/lm_plot_settings_v4.xml", package = "terraclivaviz"),
+  settings = system.file("settings/lm_plot_settings_enexus.xml", package =
+    "terraclivaviz"),
   mask = FALSE,
   write_tif = FALSE,
   ...

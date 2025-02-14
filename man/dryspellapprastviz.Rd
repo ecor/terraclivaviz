@@ -8,7 +8,8 @@ dryspellapprastviz(
   x,
   filenames,
   sf,
-  settings = system.file("settings/lm_plot_settings_v4.xml", package = "terraclivaviz"),
+  settings = system.file("settings/lm_plot_settings_enexus.xml", package =
+    "terraclivaviz"),
   fun_aggr = terracliva::aggr_fun_suffixes(),
   summary_suffixes = c("pvalue", "coeff", "stdrerror", "rsquared", "senslope",
     "pvalue_mk"),
