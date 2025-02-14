@@ -35,6 +35,10 @@ NULL
 #' filenames <- system.file(package="terraclivaviz") %>% file.path("examples/plot/hwmid/hwmid_%s.jpg")
 #' out_hw_regress_viz <- hwmidapprastviz(x=o_hw_regress,filenames,sf=dataset_sf)
 #' 
+#' filenames <- system.file(package="terraclivaviz") %>% file.path("examples/plot/hwmid/hwmid_svg_printing_%s.svg")
+#' out_hw_regress_svg_viz <- hwmidapprastviz(x=o_hw_regress,filenames,sf=dataset_sf)
+#' 
+#' 
 
 
 
