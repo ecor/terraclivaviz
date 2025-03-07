@@ -4,13 +4,13 @@ Title: Climate Variability tools (Visualization)
 Type: Package
 Authors@R: c(person(given="Emanuele",family="Cordano",role = c("aut","cre"),email = "emanuele.cordano@gmail.com"))
 Description: Data and information visualization of Climate Variability Analysis with spatio-temporal gridded coverages (terracliva).
-Version: 0.0.5
-Date: 2024-11-18
+Version: 0.0.6
+Date: 2025-03-07
 Repository: CRAN
 Depends: tidyterra,terracliva,lmomPi
 Imports: stringr,ggplot2,xml2,RColorBrewer,terra,raster
 Enhances:	sf
-Suggests: lubridate
+Suggests: lubridate,svglite
 RoxygenNote: 7.3.2
 NeedsCompilation: no
 Packaged: 2017-11-28 15:32:55 UTC; cordaem
