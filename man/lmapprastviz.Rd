@@ -13,6 +13,9 @@ lmapprastviz(
     "terraclivaviz"),
   mask = FALSE,
   write_tif = FALSE,
+  use_levelplot = FALSE,
+  use_ggplot2 = !use_levelplot,
+  device = "png",
   ...
 )
 }
@@ -31,7 +34,13 @@ lmapprastviz(
 
 \item{write_tif}{logical. Default is \code{FALSE}. If \code{TRUE}, results are also written and saved as GeoTiff raster files.}
 
-\item{...}{further arguments passed to \code{\link{ggsave}}}
+\item{use_levelplot}{logical. If \code{TRUE}  plots ara made with \code{\link{levelplot}}}
+
+\item{use_ggplot2}{logical. If \code{TRUE} (default) plots ara mede with \code{ggplot2}}
+
+\item{device}{used if \code{use_levelplot==TRUE} , argument paased to passed to \code{\link{trellis.device}}}
+
+\item{...}{further arguments passed to \code{\link{ggsave}} or alternatively \code{\link{trellis.device}}}
 }
 \description{
 Precipitation Deficit with L-Moments  Climate Variability Analysis in Spatial Gridded Coverage (visualization)
@@ -69,5 +78,9 @@ out_monthly <- lmapprast(dataset_monthly,index="monthly",distrib="pe3")
 
 filenames <- system.file(package="terraclivaviz") \%>\% file.path("examples/plot/lm/monthly/lm_\%s.jpg")
 out_monthly_viz <- lmapprastviz(x=out_monthly,filenames,sf=dataset_sf)
+
+
+out_monthly_viz <- lmapprastviz(x=out_monthly,filenames,sf=dataset_sf,use_levelplot=TRUE)
+
 
 }

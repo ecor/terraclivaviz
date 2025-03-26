@@ -9,8 +9,11 @@ NULL
 #' @param distrib see \code{\link{pel}}
 #' @param settings xml files for plotting settings (see internal code)
 #' @param mask logical If it is \code{TRUE} only the area within the \code{sf} shape is visualized. Default is \code{FALSE}
+#' @param use_levelplot logical (experimantal). If \code{TRUE}  plots ara made with \code{\link{levelplot}}
+#' @param use_ggplot2 logical. If \code{TRUE} (default) plots ara mede with \code{ggplot2}
+#' @param device used if \code{use_levelplot==TRUE} , argument paased to passed to \code{\link{trellis.device}}
 #' @param write_tif logical. Default is \code{FALSE}. If \code{TRUE}, results are also written and saved as GeoTiff raster files.
-#' @param ... further arguments passed to \code{\link{ggsave}}
+#' @param ... further arguments passed to \code{\link{ggsave}} or alternatively \code{\link{trellis.device}}
 #'
 #' 
 #' 
@@ -23,7 +26,13 @@ NULL
 #' @importFrom xml2 read_xml  xml_children xml_text xml_name
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom lmomPi pel
-
+#' @importFrom grDevices dev.off
+#' @importFrom lattice  levelplot trellis.device
+#' @importFrom rasterVis levelplot
+#' @importFrom latticeExtra layer
+#' @importFrom sp sp.polygons
+#' @importFrom sf as_Spatial
+#' 
 #' @export
 #'
 #' @note \code{x} must have the proper time aggregation for the analysis before the execution of this function.
@@ -61,6 +70,10 @@ NULL
 #' filenames <- system.file(package="terraclivaviz") %>% file.path("examples/plot/lm/monthly/lm_%s.jpg")
 #' out_monthly_viz <- lmapprastviz(x=out_monthly,filenames,sf=dataset_sf)
 #' 
+#' 
+#' out_monthly_viz <- lmapprastviz(x=out_monthly,filenames,sf=dataset_sf,use_levelplot=TRUE)
+#' 
+#' 
 
 
 
@@ -71,7 +84,8 @@ NULL
 
 
 
-lmapprastviz <- function(x,filenames,sf,distrib=eval(formals(lmomPi::pel)$distrib),settings=system.file("settings/lm_plot_settings_enexus.xml",package="terraclivaviz"),mask=FALSE,write_tif=FALSE,...){
+lmapprastviz <- function(x,filenames,sf,distrib=eval(formals(lmomPi::pel)$distrib),settings=system.file("settings/lm_plot_settings_enexus.xml",package="terraclivaviz"),mask=FALSE,write_tif=FALSE,
+                         use_levelplot=FALSE,use_ggplot2=!use_levelplot,device="png",...){
   
   ## TO DO 
   #### https://en.wikipedia.org/wiki/Data_and_information_visualization
@@ -145,21 +159,49 @@ lmapprastviz <- function(x,filenames,sf,distrib=eval(formals(lmomPi::pel)$distri
   names(filenames) <- names(x)
   for (it in names(x)) {
    
-    ####it2 <<- it
-    gg  <- ggplot()+geom_spatraster(data=x[[it]])+theme_bw()
-    gg <-  gg+geom_sf(data=sf,fill=NA,color="black",linewidth=0.15)
-    gg <- gg+ggtitle(it)
+    if (use_ggplot2) {
+      gg  <- ggplot()+geom_spatraster(data=x[[it]])+theme_bw()
+      gg <-  gg+geom_sf(data=sf,fill=NA,color="black",linewidth=0.15)
+      gg <- gg+ggtitle(it)
     
-    colorscale <- settings_list[[nn2[it]]][["colorscale"]]
-    ##print(colorscale)
-    rev <- as.numeric(settings_list[[nn2[it]]][["rev"]])
-    colors <-   colorRampPalette(brewer.pal(9,colorscale))(9)
-    if (rev<0) colors <- rev(colors)
-    print(colors)
-    gg <- gg+scale_fill_gradientn(colors=colors,na.value=NA)
-    filename=str_replace_all(filenames[it]," ","_")
-    ggsave(filename=filename,plot=gg,...)
-    
+      colorscale <- settings_list[[nn2[it]]][["colorscale"]]
+      ##print(colorscale)
+      rev <- as.numeric(settings_list[[nn2[it]]][["rev"]])
+      colors <-   colorRampPalette(brewer.pal(9,colorscale))(9)
+      if (rev<0) colors <- rev(colors)
+      print(colors)
+      gg <- gg+scale_fill_gradientn(colors=colors,na.value=NA)
+      filename=str_replace_all(filenames[it]," ","_")
+    ####gg <- gg++theme(plot.margin = unit(c(0, 0, 0, 0), "cm"))
+      ggsave(filename=filename,plot=gg,...)
+    } else if (use_levelplot) {
+      
+      # Supponiamo che 'x' sia una lista di RasterLayer e 'it' sia l'indice corrente
+      raster_layer <- x[[it]]
+      
+      # Supponiamo che 'sf' sia un oggetto Spatial
+      spatial_data <- sf |> as_Spatial()
+      
+      # Supponiamo che 'settings_list' e 'nn2' siano liste di impostazioni
+      colorscale <- settings_list[[nn2[it]]][["colorscale"]]
+      rev <- as.numeric(settings_list[[nn2[it]]][["rev"]])
+      colors <- colorRampPalette(brewer.pal(9, colorscale))
+      if (rev < 0) colors <- rev(colors)
+      
+      # Creazione del plot con rasterVis::levelplot
+      plot <- levelplot(raster_layer, col.regions = colors, margin=FALSE,main = it) +
+        latticeExtra::layer(sp::sp.polygons(spatial_data, col = "black", lwd = 0.15))
+      
+      # Salvataggio del plot
+      filename=str_replace_all(filenames[it]," ","_")
+      
+      raster::extension(filename) <- ".%s" |> sprintf(device)
+      
+      trellis.device(device = device, filename = filename,...)
+      print(plot)
+      dev.off()
+      
+    }
   
     if (write_tif) {
       
