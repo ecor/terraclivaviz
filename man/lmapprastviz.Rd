@@ -34,7 +34,7 @@ lmapprastviz(
 
 \item{write_tif}{logical. Default is \code{FALSE}. If \code{TRUE}, results are also written and saved as GeoTiff raster files.}
 
-\item{use_levelplot}{logical. If \code{TRUE}  plots ara made with \code{\link{levelplot}}}
+\item{use_levelplot}{logical (experimantal). If \code{TRUE}  plots ara made with \code{\link{levelplot}}}
 
 \item{use_ggplot2}{logical. If \code{TRUE} (default) plots ara mede with \code{ggplot2}}
 

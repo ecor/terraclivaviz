@@ -159,15 +159,24 @@ lmapprastviz <- function(x,filenames,sf,distrib=eval(formals(lmomPi::pel)$distri
   names(filenames) <- names(x)
   for (it in names(x)) {
    
+    colorscale <- settings_list[[nn2[it]]][["colorscale"]]
+    rev <- as.numeric(settings_list[[nn2[it]]][["rev"]])
+    if (str_detect(colorscale,',')) 
+      colors <- colorRampPalette(strsplit(colorscale,',')[[1]], bias=1)
+    else 
+      colors <- colorRampPalette(brewer.pal(9,colorscale))
+    # if (rev<0) colors <- rev(colors)
+    
     if (use_ggplot2) {
       gg  <- ggplot()+geom_spatraster(data=x[[it]])+theme_bw()
       gg <-  gg+geom_sf(data=sf,fill=NA,color="black",linewidth=0.15)
       gg <- gg+ggtitle(it)
     
-      colorscale <- settings_list[[nn2[it]]][["colorscale"]]
-      ##print(colorscale)
-      rev <- as.numeric(settings_list[[nn2[it]]][["rev"]])
-      colors <-   colorRampPalette(brewer.pal(9,colorscale))(9)
+      # colorscale <- settings_list[[nn2[it]]][["colorscale"]]
+      # ##print(colorscale)
+      # rev <- as.numeric(settings_list[[nn2[it]]][["rev"]])
+      # colors <-   colorRampPalette(brewer.pal(9,colorscale))(9)
+      colors <- colors(9)
       if (rev<0) colors <- rev(colors)
       print(colors)
       gg <- gg+scale_fill_gradientn(colors=colors,na.value=NA)
@@ -181,12 +190,12 @@ lmapprastviz <- function(x,filenames,sf,distrib=eval(formals(lmomPi::pel)$distri
       
       # Supponiamo che 'sf' sia un oggetto Spatial
       spatial_data <- sf |> as_Spatial()
-      
+
       # Supponiamo che 'settings_list' e 'nn2' siano liste di impostazioni
-      colorscale <- settings_list[[nn2[it]]][["colorscale"]]
-      rev <- as.numeric(settings_list[[nn2[it]]][["rev"]])
-      colors <- colorRampPalette(brewer.pal(9, colorscale))
-      if (rev < 0) colors <- rev(colors)
+      # colorscale <- settings_list[[nn2[it]]][["colorscale"]]
+      # rev <- as.numeric(settings_list[[nn2[it]]][["rev"]])
+      # colors <- colorRampPalette(brewer.pal(9, colorscale))
+      # if (rev < 0) colors <- rev(colors)
       
       # Creazione del plot con rasterVis::levelplot
       plot <- levelplot(raster_layer, col.regions = colors, margin=FALSE,main = it) +
