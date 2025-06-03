@@ -96,4 +96,52 @@
         <rev>1</rev>
         <code_fun>dryspell</code_fun>
     </record>
+    <record>
+        <id>spi_month</id>
+        <particular_id>month</particular_id>
+        <name></name>
+        <colorscale>YlOrRd</colorscale>
+        <color_max>#313695</color_max>
+        <color_zero>#ffffbf</color_zero>
+        <color_min>#d73027</color_min>
+        <value_max>4</value_max>
+        <value_zero>0</value_zero>
+        <value_min>-4</value_min>
+        <rev>1</rev>
+        <code_fun>spi</code_fun>
+    </record>
+    <record>
+        <id>spi_regress</id>
+        <particular_id>regress</particular_id>
+        <name>spi regress</name>
+        <colorscale>YlOrRd</colorscale>
+        <color_max>#313695</color_max>
+        <color_zero>#ffffbf</color_zero>
+        <color_min>#d73027</color_min>
+        <value_max>2</value_max>
+        <value_zero>0</value_zero>
+        <value_min>-2</value_min>
+        <rev>1</rev>
+        <code_fun>spi</code_fun>
+    </record>
+    <record>
+        <id>spi_pvalue</id>
+        <particular_id>pvalue</particular_id>
+        <name>spi pvalue</name>
+        <colorscale>YlOrRd</colorscale>
+        <color_max>#313695</color_max>
+        <color_zero>#ffffbf</color_zero>
+        <color_min>#d73027</color_min>
+        <value_max>1</value_max>
+        <value_zero>signif</value_zero>
+        <value_min>0</value_min>
+        <rev>1</rev>
+        <code_fun>spi</code_fun>
+    </record>
+    
+    
+    
+    
+    
+    
 </records_function>

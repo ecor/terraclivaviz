@@ -1,0 +1,8 @@
+name,min,max
+G Extremey Dry,-Inf,-1.64
+F Severely Dry,-1.64,-1.28
+E Moderately Dry,-1.28,-0.84
+D Normal,-0.84,0.84
+C Moderately Wet,0.84,1.28
+B Severely Wet ,1.28,1.64
+A Extremely Wet,1.64,+Inf

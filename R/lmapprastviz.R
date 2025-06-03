@@ -11,6 +11,7 @@ NULL
 #' @param mask logical If it is \code{TRUE} only the area within the \code{sf} shape is visualized. Default is \code{FALSE}
 #' @param use_levelplot logical (experimantal). If \code{TRUE}  plots ara made with \code{\link{levelplot}}
 #' @param use_ggplot2 logical. If \code{TRUE} (default) plots ara mede with \code{ggplot2}
+#' @param lwd,linewidth line width
 #' @param device used if \code{use_levelplot==TRUE} , argument paased to passed to \code{\link{trellis.device}}
 #' @param write_tif logical. Default is \code{FALSE}. If \code{TRUE}, results are also written and saved as GeoTiff raster files.
 #' @param ... further arguments passed to \code{\link{ggsave}} or alternatively \code{\link{trellis.device}}
@@ -31,8 +32,8 @@ NULL
 #' @importFrom rasterVis levelplot
 #' @importFrom latticeExtra layer
 #' @importFrom sp sp.polygons
-#' @importFrom sf as_Spatial
-#' 
+#' @importFrom sf as_Spatial st_geometry
+#' @import sp
 #' @export
 #'
 #' @note \code{x} must have the proper time aggregation for the analysis before the execution of this function.
@@ -62,7 +63,7 @@ NULL
 #' 
 #' library(lubridate)
 #' dataset_monthly <- "%s/monthly/chirps_monthly_goma_%04d.grd" %>% sprintf(dataset_path,years) %>% rast()
-#' time(dataset_monthly) <-  names(dataset_monthly) %>% paste0("_01") %>% as.Date(format="X%Y_%m_%d")
+#' terra::time(dataset_monthly) <-  names(dataset_monthly) %>% paste0("_01") %>% as.Date(format="X%Y_%m_%d")
 #' 
 #' 
 #' out_monthly <- lmapprast(dataset_monthly,index="monthly",distrib="pe3")
@@ -85,7 +86,7 @@ NULL
 
 
 lmapprastviz <- function(x,filenames,sf,distrib=eval(formals(lmomPi::pel)$distrib),settings=system.file("settings/lm_plot_settings_enexus.xml",package="terraclivaviz"),mask=FALSE,write_tif=FALSE,
-                         use_levelplot=FALSE,use_ggplot2=!use_levelplot,device="png",...){
+                         use_levelplot=FALSE,use_ggplot2=!use_levelplot,device="png",lwd=linewidth,linewidth=0.15,...){
   
   ## TO DO 
   #### https://en.wikipedia.org/wiki/Data_and_information_visualization
@@ -161,9 +162,9 @@ lmapprastviz <- function(x,filenames,sf,distrib=eval(formals(lmomPi::pel)$distri
    
     if (use_ggplot2) {
       gg  <- ggplot()+geom_spatraster(data=x[[it]])+theme_bw()
-      gg <-  gg+geom_sf(data=sf,fill=NA,color="black",linewidth=0.15)
+      gg <-  gg+geom_sf(data=sf,fill=NA,color="black",linewidth=lwd)
       gg <- gg+ggtitle(it)
-    
+
       colorscale <- settings_list[[nn2[it]]][["colorscale"]]
       ##print(colorscale)
       rev <- as.numeric(settings_list[[nn2[it]]][["rev"]])
@@ -180,17 +181,19 @@ lmapprastviz <- function(x,filenames,sf,distrib=eval(formals(lmomPi::pel)$distri
       raster_layer <- x[[it]]
       
       # Supponiamo che 'sf' sia un oggetto Spatial
-      spatial_data <- sf |> as_Spatial()
-      
+      ##spatial_data <- sf |> st_geometry() |> as_Spatial()
+      spatial_data <- as_Spatial(st_geometry(sf))
+      spatial_data0 <<- spatial_data
       # Supponiamo che 'settings_list' e 'nn2' siano liste di impostazioni
       colorscale <- settings_list[[nn2[it]]][["colorscale"]]
       rev <- as.numeric(settings_list[[nn2[it]]][["rev"]])
       colors <- colorRampPalette(brewer.pal(9, colorscale))
       if (rev < 0) colors <- rev(colors)
-      
+      lwd0 <<- lwd
       # Creazione del plot con rasterVis::levelplot
       plot <- levelplot(raster_layer, col.regions = colors, margin=FALSE,main = it) +
-        latticeExtra::layer(sp::sp.polygons(spatial_data, col = "black", lwd = 0.15))
+        latticeExtra::layer(sp::sp.polygons(get("spatial_data"), col = "black", lwd =lwd),
+                            data=spatial_data)
       
       # Salvataggio del plot
       filename=str_replace_all(filenames[it]," ","_")
