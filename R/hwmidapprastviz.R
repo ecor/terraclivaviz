@@ -41,12 +41,6 @@ NULL
 #' 
 
 
-
-
-
-
-
-
 hwmidapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_settings_enexus.xml",package="terraclivaviz"),mask=FALSE,write_tif=FALSE,...){
   
   ## TO DO 
@@ -93,10 +87,7 @@ hwmidapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plo
   names(filenames) <- names(x)
   for (it in names(x)) {
     ####it2 <<- it
-    
-    
-    
-    
+
     gg  <- ggplot()+geom_spatraster(data=x[[it]])+theme_bw()
     gg <-  gg+geom_sf(data=sf,fill=NA,color="black",linewidth=0.15)
     gg <- gg+ggtitle(it)
@@ -119,22 +110,10 @@ hwmidapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plo
       
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
   }
   
   out <- filenames
-  
-  
-  
-  
+
   return(out)
   
 }

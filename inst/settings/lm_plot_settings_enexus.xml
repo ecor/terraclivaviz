@@ -101,9 +101,9 @@
         <particular_id>month</particular_id>
         <name></name>
         <colorscale>YlOrRd</colorscale>
-        <color_max>#313695</color_max>
-        <color_zero>#ffffbf</color_zero>
-        <color_min>#d73027</color_min>
+        <color_max>#2F5597FF</color_max>
+        <color_zero>#DBDBDBFF</color_zero>
+        <color_min>#C00000FF</color_min>
         <value_max>4</value_max>
         <value_zero>0</value_zero>
         <value_min>-4</value_min>

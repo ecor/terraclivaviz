@@ -3,12 +3,18 @@ NULL
 #' SPI / SPEI index  (see lmomPi implementation)  Climate Variability Analysis in Spatial Gridded Coverage (visualization)
 #' 
 #'
-#' @param x a \code{SpatRast-Class} object returned by \code{\link{siapprast}}. 
+#' @param x a \code{SpatRast-Class} object returned by \code{\link{spiapprast}}. 
 #' @param sf an \code{sf} object which will be added to the plotted maps. 
-#' @param filenames vector or string for names of the output files (plots) 
-#' @param settings xml files for plotting settings (see internal code)
-#' @param mask logical If it is \code{TRUE} only the area within the \code{sf} shape is visualized. Default is \code{FALSE}
+#' @param filenames vector or string for names of the output files (plots) .
+#' @param settings xml files for plotting settings (see internal code).
+#' @param mask logical If it is \code{TRUE} only the area within the \code{sf} shape is visualized. Default is \code{FALSE}.
+#' @param signif significance , used to detect trend occurrence, see \code{\link{spiapprast}}.
 #' @param write_tif logical. Default is \code{FALSE}. If \code{TRUE}, results are also written and saved as GeoTiff raster files.
+#' @param add_spatial_statistics  logical. If \code{TRUE} spatial statistics are calculated on the areas/polygons of \code{sf} geospatial vector object.
+#' @param id.name id name in \code{sf} for each areas/polygons. 
+#' @param month months to be selected for spatial stastics.
+#' 
+#'
 #' @param ... further arguments passed to \code{\link{ggsave}}
 #'
 #' 
@@ -19,38 +25,47 @@ NULL
 #' @importFrom stringr str_replace_all
 #' @importFrom terra writeRaster
 #' @importFrom ggplot2 scale_fill_gradient2
+#' @importFrom rlang .data
+#' @importFrom data.table as.data.table rbindlist melt
+#' @importFrom dplyr select filter arrange full_join
+#' @importFrom terra extract levels coltab 
+#' @importFrom grDevices rgb
+#' @importFrom utils write.table
+#' @importFrom stringr str_trim str_split
+#' @importFrom magrittr %>%
+#' 
+#' 
+#' 
+
 #' 
 #' @examples 
 #' 
 #' library(magrittr)
-#' library(terra)
+#' library(terracliva)
 #' library(lmomPi)
 #' library(sf)
 #' 
+#' 
 #' years <- 1982:2023
+#
+#' dataset_monthly <- system.file("ext_data/mekrou/CHIRPS_StackMekrou.nc",package="terraclivaviz")
+#' dataset_monthly <- rast(dataset_monthly)+0
 #' 
-#' dataset_path <- system.file("ext_data/precipitation",package="terracliva")
-#' dataset_monthly <- "%s/monthly/chirps_monthly_goma_%04d.grd" %>% 
-#' sprintf(dataset_path,years) %>% rast()
-#' terra::time(dataset_monthly) <-  names(dataset_monthly) %>% 
-#' paste0("_01") %>% as.Date(format="X%Y_%m_%d")
-#' dataset_sf <- system.file("ext_data/OSM_Goma_quartiers_210527.shp"
-#' ,package="terracliva") %>% st_read()
+#' 
+#' dataset_sf <- system.file("ext_data/mekrou/Mekrou_AOI/Mekrou_AOI_v3.shp",
+#' package="terraclivaviz") %>% 
+#'  st_read()
+#' 
+#' outspi <- spiapprast(x=dataset_monthly,distrib="pe3",summary_regress=TRUE,add_cat=TRUE,spi.scale=1)
+#' 
+#' 
+#' filenames <- system.file(package="terraclivaviz") %>% 
+#'  file.path("examples/plot/spi/spi_mekrow_%s.jpg")
+#' out <- spiapprastviz(x=outspi,filenames=filenames,
+#'  sf=dataset_sf,signif=0.1,
+#'  write_tif=TRUE,month=6:10)
+#' 
 #'
-#' o_spi1t <- spiapprast(x=dataset_monthly,distrib="pe3",summary_regress=TRUE)
-#' 
-#' ###filenames <- system.file(package="terraclivaviz") %>% file.path("examples/plot/spi/spi_%s.jpg")
-#' filenames <- "/home/ecor/local/rpackages/jrc/terraclivaviz/inst/examples/plot/spi/spi_%s.jpg"
-#' out_spi1t_viz <- spiapprastviz(x=o_spi1t,filenames,sf=dataset_sf)
-#' 
-#' ###filenames <- system.file(package="terraclivaviz") %>% file.path("examples/plot/spi/spi_svg_printing_%s.svg")
-#' filenames <- "/home/ecor/local/rpackages/jrc/terraclivaviz/inst/examples/plot/spi/spi_svg_printing_%s.svg"
-#' out_spi1t_viz <- spiapprastviz(x=o_spi1t,filenames,sf=dataset_sf,write_tif=TRUE)
-#' 
-#' 
-#' 
-#' 
-#' 
 
 
 
@@ -59,7 +74,7 @@ NULL
 
 
 
-spiapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_settings_enexus.xml",package="terraclivaviz"),signif=attr(x,"signif"),mask=FALSE,write_tif=FALSE,...){
+spiapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_settings_enexus.xml",package="terraclivaviz"),signif=attr(x,"signif"),mask=FALSE,write_tif=FALSE,add_spatial_statistics=!is.null(attr(x,"spi_cat")),id.name="NAME",month=1:12,...){
   
   ## TO DO 
   #### https://en.wikipedia.org/wiki/Data_and_information_visualization
@@ -69,6 +84,8 @@ spiapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_
     x <- crop(x,EE)
   }
   code_fun <- "spi"
+  spi.scale <- attr(x,"spi.scale")
+  if (length(spi.scale)==0) spi.scale <- as.numeric(NA)
   
   if (is.character(settings)) {
     xml_settings <- settings
@@ -102,12 +119,12 @@ spiapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_
    nn2[iregress] <- "regress"
    nn2[ipvalue] <- "pvalue"
    names(nn2) <- names(x)
-   nn2g <<- nn2
+ 
   
   if (length(filenames)==1) filenames <- sprintf(filenames,names(x))
   names(filenames) <- names(x)
   for (it in names(x)) {
-    ####it2 <<- it
+    
     
     
     
@@ -125,9 +142,9 @@ spiapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_
     print("colorscale:")
     print(colorscale)
     ###
-    color_max <- settings_list[[nn2[it]]][["color_max"]]
-    color_min <- settings_list[[nn2[it]]][["color_min"]]
-    color_zero <- settings_list[[nn2[it]]][["color_zero"]]
+    color_max <- settings_list[[nn2[it]]][["color_max"]] |> str_trim()
+    color_min <- settings_list[[nn2[it]]][["color_min"]]  |> str_trim()
+    color_zero <- settings_list[[nn2[it]]][["color_zero"]]  |> str_trim()
     ###
     value_max <- settings_list[[nn2[it]]][["value_max"]]
     value_min <- settings_list[[nn2[it]]][["value_min"]]
@@ -158,19 +175,174 @@ spiapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_
       writeRaster(x[[it]],filename=filename_tif,overwrite=TRUE)
       
     }
+    out <- filenames
+  }
+    if (add_spatial_statistics) {
+      
+      y <- attr(x,"spi_cat")
+   
+      ncats <- nrow(terra::levels(y)[[1]])
+      
+      
+  ##    for (i in terra::levels(y)[[1]]) {
+        
+        ###
+        fun0 <- function(x,ncats=ncats){
+          
+          print(x)
+          print(ncats)
+          o <- array(as.numeric(NA),ncats)
+          names(o) <- sprintf("n%03d",as.integer(1:ncats))
+          if (!all(is.na(x))) {
+            o[] <- 0
+            index <- sprintf("n%03d",as.integer(x))
+            o2 <- tapply(x,INDEX=index,FUN=length)
+            o2 <- o2[names(o2) %in% names(o)]
+            o[names(o2)] <- o2[names(o2)]
+            o <- o/sum(o,na.rm=TRUE)*100
+            
+          }
+          print(o)
+          return(list(o))
+          }  
+        ###
+       
+       
+        uuu <- terra::extract(y,y=vect(sf),fun=fun0,ncats=ncats,raw=TRUE)
+        uu1 <- uuu |> as.data.table() |> melt(id="ID")
+        uu2 <-  lapply(uu1$value,FUN=t) |> lapply(uu1$value,FUN=as.data.table) |> rbindlist()
+        uu1$variable <- str_split(as.character(uu1$variable),"[.]") |> sapply(function(x){x[1]})
+        
+        uu1 <- cbind(uu1 |> select(-3),uu2) 
+        print("uu1")
+        print(uu1)
+        uu1$ID <- sf[,id.name][[1]][uu1$ID]
+        uu1$date <- str_split(uu1$variable,"_",n=3) |> sapply(FUN=function(x){x[[3]]}) |> paste0("_01") ##|> as.Date(format="%Y_%m_%d")
+        uu1 <- uu1 |> select(-.data$variable) |> melt(id=c("ID","date"))
+        names(uu1)[names(uu1)=="variable"] <- "category_id"
+        names(uu1)[names(uu1)=="ID"] <- "toponym"
+        names(uu1)[names(uu1)=="value"] <- "area_percentage"
+        ###
+        clrs <- terra::coltab(y)[[1]][,-1]
+        clrs$maxColorValue <- 255
+        clrs <- clrs |> apply(MARGIN=1,FUN=as.list) |> lapply(do.call,what=rgb) |> unlist()
+        ###
+        llrs <- terra::levels(y)[[1]]
+        llrs$color <- clrs
+        llrs$ID <- sprintf("n%03d",as.integer(llrs$ID))
+        names(llrs)[names(llrs)=="ID"] <- "category_id"
+        names(llrs)[names(llrs)=="name"] <- "category"
+     
+        ###
+        uu1 <- full_join(uu1,llrs) |> as.data.table()
+        ###
+        
+        
+       
+        
+        
+        file_csv <- str_split(filenames[[1]],"_on_",n=2) |> sapply(FUN=function(x){x[[1]]}) |> paste0("_spatial_stats.csv")
+        write.table(uu1,file=file_csv,sep=",",quote=FALSE,col.names=TRUE,row.names=FALSE)
+        uu1$date <- as.Date(uu1$date,format="%Y_%m_%d")
+       ## uu1$value[is.na(uu1$value)] <- list(array(NA,ncats))
+        ######
+        
+       
+        
+        
+    ##    yi <- (y==i)
+        
+        
+    ##  }
+      
+      
+      attr(out,"spatial_stats") <- uu1
+      #####
+      
+      
+      
+      # #####
+      # 
+      # 
+      # repeat{
+      #   #cond_reg = TRUE ##spidfmm$name == reg
+      #   
+      #   group_reg = region_names[indreg]
+      #   group_reg = group_reg[which(group_reg!='NA')]
+      #   
+      #   cond_reg = spidfmm$name %in% group_reg
+      #   cond_mon = spidfmm$month %in% months_selected ###== monsel 
+      #   
+      #   if(length(which(cond_reg==TRUE))==0){ break}
+      #   
+      #   monsel <- paste(str_sub(months_selected,1,1),collapse="")
+      #   breaks_time <- seq(from=min(spidfmm$time), to=max(spidfmm$time), by = "year")
+      #   labels_time <- as.character(breaks_time,format="%Y")
+      #   spidfmm_sel=spidfmm[cond_reg & cond_mon,]
+      #   spidfmm_sel$spi_cat_id <- as.character(as.integer(spicat[spidfmm_sel$spi_cat]))
+      #   breaks_<-sort(unique(spidfmm_sel$spi_cat))
+      #   labels_ <- sapply(X=str_split(breaks_," ",n=2),FUN=function(y){y[2]})
+      #   names(col)=breaks_
+      #   
+      
+      uuc <- uu1 |> dplyr::select(.data$category,.data$color) |> dplyr::filter(!duplicated(.data$category)) |> dplyr::arrange(.data$category)
+      
+      uu1m <- uu1 |> dplyr::filter(lubridate::month(.data$date) %in% month)
+      pp <- ggplot2::ggplot(data=uu1m, mapping=ggplot2::aes(x=.data$date, y=.data$area_percentage))+ggplot2::geom_col(mapping=ggplot2::aes(colour=.data$category,fill=.data$category))
+      pp <- pp+ggplot2::scale_colour_manual(values = uuc$color, breaks = uuc$category, labels = uuc$category)
+      pp <- pp+ggplot2::scale_fill_manual(values = uuc$color, breaks = uuc$category, labels = uuc$category)
+      pp <- pp+ggplot2::xlab("Time")+ggplot2::ylab("Percentage of Total Area [%]")
+      pp <- pp+ggplot2::facet_grid(.data$toponym ~ .)
+      pp <- pp+ggplot2::theme(text = ggplot2::element_text(size = 30),axis.text.x=ggplot2::element_text(size = 10),legend.text=ggplot2::element_text(size = 20),legend.direction="horizontal",legend.position="top",legend.title = ggplot2::element_blank(),legend.title.align=0)
+    ##  pp <- pp+ggplot2::scale_x_date(breaks = breaks_time,labels=labels_time)
+      if (all(1:12 %in% month)) {
+        monsel <- "all months"
+      } else {
+        monsel <-  base::months(as.Date("1990-01-01")+months(0:11)) |> str_sub(1,1)
+        monsel <- monsel[month] |> paste(collapse="")
+      }
+      pp <- pp+ggplot2::ggtitle(sprintf("Area %% affected per anomaly intensity class based on SPI- %2d  (%s)",spi.scale,monsel))
+      
+      
+      pp <- pp+ggplot2::ggtitle(sprintf("Area %% affected per anomaly intensity class based on SPI- %2d  (%s)",spi.scale,monsel))
+      
+      
+      #   
+      #   
+      #file_csv <- str_split(filenames[[1]],"_on_",n=2) |> sapply(FUN=function(x){x[[1]]}) |> paste0("_spatial_stats.csv")
+      file_area_png <- file_csv
+      raster::extension(file_area_png) <- ""
+      ####
+      file_area_png <- file_area_png |> paste0(sprintf("_spi%02d_cat_percentage_area_%s.png",spi.scale,monsel))
+      region_names=unique(uu1$toponym)
+      ggplot2::ggsave(filename=file_area_png,plot=pp,width=297*2,height=210*length(region_names)/2,units="mm",limitsize=FALSE)  ## A4 210 * 297
+      ####
+      #   
+      #   if(length(group_reg) == length(region_names))
+      #   {
+      #     file_area_png <- file.path(output_path,sprintf("spi%02d_cat_percentage_area_%s.png",spi.scale,monsel))
+      #   }
+      #   else
+      #   {
+      #     file_area_png <- file.path(output_path,sprintf("spi%02d_cat_percentage_area_%s_%i.png",spi.scale,monsel,i))
+      #   }
+      #   ggplot2::ggsave(filename=file_area_png,plot=pp,width=297*2,height=210*length(group_reg)/2,units="mm",limitsize=FALSE,dpi=outRes)
+      #   
+      #   
+      #   indreg = indreg + n_const
+      #   i = i + 1
+      # }
+      # setwd(output_path)
     
-    
-    
-    
-    
-    
+      attr(out,"spatial_stats_plot") <- pp
+      
     
     
     
     
   }
   
-  out <- filenames
+  
   
   
   

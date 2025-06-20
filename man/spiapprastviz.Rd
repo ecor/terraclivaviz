@@ -13,21 +13,32 @@ spiapprastviz(
   signif = attr(x, "signif"),
   mask = FALSE,
   write_tif = FALSE,
+  add_spatial_statistics = !is.null(attr(x, "spi_cat")),
+  id.name = "NAME",
+  month = 1:12,
   ...
 )
 }
 \arguments{
-\item{x}{a \code{SpatRast-Class} object returned by \code{\link{siapprast}}.}
+\item{x}{a \code{SpatRast-Class} object returned by \code{\link{spiapprast}}.}
 
-\item{filenames}{vector or string for names of the output files (plots)}
+\item{filenames}{vector or string for names of the output files (plots) .}
 
 \item{sf}{an \code{sf} object which will be added to the plotted maps.}
 
-\item{settings}{xml files for plotting settings (see internal code)}
+\item{settings}{xml files for plotting settings (see internal code).}
 
-\item{mask}{logical If it is \code{TRUE} only the area within the \code{sf} shape is visualized. Default is \code{FALSE}}
+\item{signif}{significance , used to detect trend occurrence, see \code{\link{spiapprast}}.}
+
+\item{mask}{logical If it is \code{TRUE} only the area within the \code{sf} shape is visualized. Default is \code{FALSE}.}
 
 \item{write_tif}{logical. Default is \code{FALSE}. If \code{TRUE}, results are also written and saved as GeoTiff raster files.}
+
+\item{add_spatial_statistics}{logical. If \code{TRUE} spatial statistics are calculated on the areas/polygons of \code{sf} geospatial vector object.}
+
+\item{id.name}{id name in \code{sf} for each areas/polygons.}
+
+\item{month}{months to be selected for spatial stastics.}
 
 \item{...}{further arguments passed to \code{\link{ggsave}}}
 }
@@ -40,32 +51,28 @@ SPI / SPEI index  (see lmomPi implementation)  Climate Variability Analysis in S
 \examples{
 
 library(magrittr)
-library(terra)
+library(terracliva)
 library(lmomPi)
 library(sf)
 
+
 years <- 1982:2023
-
-dataset_path <- system.file("ext_data/precipitation",package="terracliva")
-dataset_monthly <- "\%s/monthly/chirps_monthly_goma_\%04d.grd" \%>\% 
-sprintf(dataset_path,years) \%>\% rast()
-terra::time(dataset_monthly) <-  names(dataset_monthly) \%>\% 
-paste0("_01") \%>\% as.Date(format="X\%Y_\%m_\%d")
-dataset_sf <- system.file("ext_data/OSM_Goma_quartiers_210527.shp"
-,package="terracliva") \%>\% st_read()
-
-o_spi1t <- spiapprast(x=dataset_monthly,distrib="pe3",summary_regress=TRUE)
-
-###filenames <- system.file(package="terraclivaviz") \%>\% file.path("examples/plot/spi/spi_\%s.jpg")
-filenames <- "/home/ecor/local/rpackages/jrc/terraclivaviz/inst/examples/plot/spi/spi_\%s.jpg"
-out_spi1t_viz <- spiapprastviz(x=o_spi1t,filenames,sf=dataset_sf)
-
-###filenames <- system.file(package="terraclivaviz") \%>\% file.path("examples/plot/spi/spi_svg_printing_\%s.svg")
-filenames <- "/home/ecor/local/rpackages/jrc/terraclivaviz/inst/examples/plot/spi/spi_svg_printing_\%s.svg"
-out_spi1t_viz <- spiapprastviz(x=o_spi1t,filenames,sf=dataset_sf,write_tif=TRUE)
+dataset_monthly <- system.file("ext_data/mekrou/CHIRPS_StackMekrou.nc",package="terraclivaviz")
+dataset_monthly <- rast(dataset_monthly)+0
 
 
+dataset_sf <- system.file("ext_data/mekrou/Mekrou_AOI/Mekrou_AOI_v3.shp",
+package="terraclivaviz") \%>\% 
+ st_read()
 
+outspi <- spiapprast(x=dataset_monthly,distrib="pe3",summary_regress=TRUE,add_cat=TRUE,spi.scale=1)
+
+
+filenames <- system.file(package="terraclivaviz") \%>\% 
+ file.path("examples/plot/spi/spi_mekrow_\%s.jpg")
+out <- spiapprastviz(x=outspi,filenames=filenames,
+ sf=dataset_sf,signif=0.1,
+ write_tif=TRUE,month=6:10)
 
 
 }

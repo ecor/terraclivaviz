@@ -16,8 +16,6 @@ lmapprastviz(
   use_levelplot = FALSE,
   use_ggplot2 = !use_levelplot,
   device = "png",
-  lwd = linewidth,
-  linewidth = 0.15,
   ...
 )
 }
@@ -41,8 +39,6 @@ lmapprastviz(
 \item{use_ggplot2}{logical. If \code{TRUE} (default) plots ara mede with \code{ggplot2}}
 
 \item{device}{used if \code{use_levelplot==TRUE} , argument paased to passed to \code{\link{trellis.device}}}
-
-\item{lwd, linewidth}{line width}
 
 \item{...}{further arguments passed to \code{\link{ggsave}} or alternatively \code{\link{trellis.device}}}
 }
@@ -75,7 +71,7 @@ out_yearly_viz <- lmapprastviz(x=out_yearly,filenames,sf=dataset_sf)
 
 library(lubridate)
 dataset_monthly <- "\%s/monthly/chirps_monthly_goma_\%04d.grd" \%>\% sprintf(dataset_path,years) \%>\% rast()
-terra::time(dataset_monthly) <-  names(dataset_monthly) \%>\% paste0("_01") \%>\% as.Date(format="X\%Y_\%m_\%d")
+time(dataset_monthly) <-  names(dataset_monthly) \%>\% paste0("_01") \%>\% as.Date(format="X\%Y_\%m_\%d")
 
 
 out_monthly <- lmapprast(dataset_monthly,index="monthly",distrib="pe3")
