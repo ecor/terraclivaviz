@@ -1,0 +1,20 @@
+id,name,colorscale,rev
+l_1,L-Mean (1st L-Moment),PuBuGn,1
+l_2 ,L-Variance (2st L-Moment),PuOr,1
+t,L-CV (2st L-Moment t),PuOr,1
+t_3,L-skewness (3rd-Moment t_3),PuOr,1
+t_4,L-kurtosis  (4rd-Moment t_4),PuOr,1
+pe3_mu,IDEM,PuOr,1
+pe3_sigma pe3_gamma,IDEM,PuOr,1
+pe3_ks_D_statistic,IDEM,PuOr,1
+pe3_ks_pvalue,IDEM,PuOr,1
+pe3_def_rt_002,IDEM,YlGnBu,1
+pe3_def_rt_005,IDEM,YlGnBu,1
+pe3_def_rt_010,IDEM,YlGnBu,1
+pe3_def_rt_020,IDEM,YlGnBu,1
+pe3_def_rt_050,IDEM,YlGnBu,1
+pe3_exc_rt_002,IDEM,PuBuGn,1
+pe3_exc_rt_005,IDEM,PuBuGn,1
+pe3_exc_rt_010,IDEM,PuBuGn,1
+pe3_exc_rt_020,IDEM,PuBuGn,1
+pe3_exc_rt_050,IDEM,PuBuGn,1

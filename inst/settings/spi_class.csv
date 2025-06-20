@@ -1,0 +1,8 @@
+name,min,max,color
+G Extremey Dry,-Inf,-1.64,#C00000FF
+F Severely Dry,-1.64,-1.28,#FF0000FF
+E Moderately Dry,-1.28,-0.84,#ED7D31FF
+D Normal,-0.84,0.84,#DBDBDBFF
+C Moderately Wet,0.84,1.28,#B4C7E7FF
+B Severely Wet ,1.28,1.64,#8FAADCFF
+A Extremely Wet,1.64,+Inf,#2F5597FF

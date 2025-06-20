@@ -1,0 +1,9 @@
+id,particular_id,name,colorscale,rev,code_fun
+lm_l_1,l_1,L-Mean(1stL-Moment),PuBuGn,1,lm
+lm_l_2,l_2,L-Variance(2stL-Moment),PuOr,1,lm
+lm_t,t,L-CV(2stL-Momentt),PuOr,1,lm
+lm_t_3,t_3,L-skewness(3rd-Momentt_3),PuOr,1,lm
+lm_t_4,t_4,L-kurtosis(4rd-Momentt_4),PuOr,1,lm
+lm_distrib,distrib,L-kurtosis(4rd-Momentt_4),PuOr,1,lm
+lm__exc_,_exc_,,PuBuGn,1,lm
+lm__def_,_def_,,YlGnBu,1,lm
