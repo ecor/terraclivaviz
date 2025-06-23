@@ -6,7 +6,7 @@ Authors@R: c(person(given="Emanuele",family="Cordano",role = c("aut","cre"),emai
   person(given="Luigi",family="Cattaneo",role = c("ctb"),email = "luigi.cattaneo@ext.ec.europa.eu"))
 Description: Data and information visualization of Climate Variability Analysis with spatio-temporal gridded coverages (terracliva).
 Version: 0.0.9
-Date: 2025-06-18
+Date: 2025-06-22
 Repository: CRAN
 Depends: tidyterra,terracliva,lmomPi
 Imports: stringr,ggplot2,xml2,RColorBrewer,terra,raster,lattice,rasterVis,latticeExtra,sp,sf,magrittr,data.table,dplyr,rlang,lubridate
