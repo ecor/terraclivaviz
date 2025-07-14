@@ -15,6 +15,7 @@ dryspellapprastviz(
     "pvalue_mk"),
   mask = FALSE,
   write_tif = FALSE,
+  create.dir = TRUE,
   ...
 )
 }
@@ -35,7 +36,7 @@ dryspellapprastviz(
 
 \item{write_tif}{logical. Default is \code{FALSE}. If \code{TRUE}, results are also written and saved as GeoTiff raster files.}
 
-\item{...}{further arguments passed to \code{\link{ggsave}}}
+\item{create.dir, ...}{further arguments passed to \code{\link[ggplot2]{ggsave}}}
 }
 \description{
 Dry Spell Analysis in Spatial Gridded Coverage (visualization)

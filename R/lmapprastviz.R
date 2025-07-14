@@ -13,7 +13,7 @@ NULL
 #' @param use_ggplot2 logical. If \code{TRUE} (default) plots ara mede with \code{ggplot2}
 #' @param device used if \code{use_levelplot==TRUE} , argument paased to passed to \code{\link{trellis.device}}
 #' @param write_tif logical. Default is \code{FALSE}. If \code{TRUE}, results are also written and saved as GeoTiff raster files.
-#' @param ... further arguments passed to \code{\link{ggsave}} or alternatively \code{\link{trellis.device}}
+#' @param create.dir,... further arguments passed to \code{\link{ggsave}} or alternatively \code{\link{trellis.device}}
 #'
 #' 
 #' 
@@ -89,7 +89,7 @@ NULL
 
 
 lmapprastviz <- function(x,filenames,sf,distrib=eval(formals(lmomPi::pel)$distrib),settings=system.file("settings/lm_plot_settings_enexus.xml",package="terraclivaviz"),mask=FALSE,write_tif=FALSE,
-                         use_levelplot=FALSE,use_ggplot2=!use_levelplot,device="png",...){
+                         use_levelplot=FALSE,use_ggplot2=!use_levelplot,device="png",create.dir=TRUE,...){
   
   ## TO DO 
   #### https://en.wikipedia.org/wiki/Data_and_information_visualization
@@ -177,7 +177,7 @@ lmapprastviz <- function(x,filenames,sf,distrib=eval(formals(lmomPi::pel)$distri
       gg <- gg+scale_fill_gradientn(colors=colors,na.value=NA)
       filename=str_replace_all(filenames[it]," ","_")
     ####gg <- gg++theme(plot.margin = unit(c(0, 0, 0, 0), "cm"))
-      ggsave(filename=filename,plot=gg,...)
+      ggsave(filename=filename,plot=gg,create.dir=create.dir,...)
     } else if (use_levelplot) {
       
       # Supponiamo che 'x' sia una lista di RasterLayer e 'it' sia l'indice corrente

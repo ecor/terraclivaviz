@@ -12,6 +12,17 @@ hwmidapprastviz(
     "terraclivaviz"),
   mask = FALSE,
   write_tif = FALSE,
+  nrow_all = NULL,
+  ncol_all = 6,
+  width = NA,
+  height = NA,
+  width_panel = width,
+  height_panel = height,
+  limitsize = FALSE,
+  dpi = 300,
+  units = "mm",
+  create.dir = TRUE,
+  add_comprehensive_view = TRUE,
   ...
 )
 }
@@ -28,7 +39,13 @@ hwmidapprastviz(
 
 \item{write_tif}{logical. Default is \code{FALSE}. If \code{TRUE}, results are also written and saved as GeoTiff raster files.}
 
-\item{...}{further arguments passed to \code{\link{ggsave}}}
+\item{nrow_all, ncol_all}{number of rows and columns for frames for the comprehensive panel}
+
+\item{width, height, limitsize, dpi, units, create.dir, ...}{further arguments passed to \code{\link[ggplot2]{ggsave}} (see defailt values in function usage)}
+
+\item{width_panel, height_panel}{width and height of a single panal within a comprehensive (frame) plot.}
+
+\item{add_comprehensive_view}{logical . If \code{TRUE} a comprehensive plot with panels of raster maps is presented.}
 }
 \description{
 Heat and Cold waves analysis in Spatial Gridded Coverage (visualization)
@@ -51,10 +68,12 @@ o_hw_regress <- hwmidapprast(tmax_dataset_daily,summary_regress=TRUE)
 
 filenames <- system.file(package="terraclivaviz") \%>\% 
   file.path("examples/plot/hwmid/hwmid_\%s.jpg")
+###filenames <- "/home/ecor/local/rpackages/jrc/terraclivaviz_examples/examples/plot/hwmid/hwmid_\%s.jpg"
 out_hw_regress_viz <- hwmidapprastviz(x=o_hw_regress,filenames,sf=dataset_sf)
 
 filenames <- system.file(package="terraclivaviz") \%>\% 
-  file.path("examples/plot/hwmid/hwmid_svg_printing_\%s.svg")
+   file.path("examples/plot/hwmid/hwmid_svg_printing_\%s.svg")
+
 out_hw_regress_svg_viz <- hwmidapprastviz(x=o_hw_regress,filenames,sf=dataset_sf)
 
 

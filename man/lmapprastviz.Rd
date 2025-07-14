@@ -16,6 +16,7 @@ lmapprastviz(
   use_levelplot = FALSE,
   use_ggplot2 = !use_levelplot,
   device = "png",
+  create.dir = TRUE,
   ...
 )
 }
@@ -40,7 +41,7 @@ lmapprastviz(
 
 \item{device}{used if \code{use_levelplot==TRUE} , argument paased to passed to \code{\link{trellis.device}}}
 
-\item{...}{further arguments passed to \code{\link{ggsave}} or alternatively \code{\link{trellis.device}}}
+\item{create.dir, ...}{further arguments passed to \code{\link{ggsave}} or alternatively \code{\link{trellis.device}}}
 }
 \description{
 Precipitation Deficit with L-Moments  Climate Variability Analysis in Spatial Gridded Coverage (visualization)

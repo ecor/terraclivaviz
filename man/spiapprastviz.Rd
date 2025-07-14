@@ -16,6 +16,17 @@ spiapprastviz(
   add_spatial_statistics = !is.null(attr(x, "spi_cat")),
   id.name = "NAME",
   month = 1:12,
+  add_comprehensive_view = TRUE,
+  nrow_all = NULL,
+  ncol_all = length(month),
+  width = NA,
+  height = NA,
+  width_panel = width,
+  height_panel = height,
+  limitsize = FALSE,
+  dpi = 300,
+  units = "mm",
+  create.dir = TRUE,
   ...
 )
 }
@@ -40,7 +51,13 @@ spiapprastviz(
 
 \item{month}{months to be selected for spatial stastics.}
 
-\item{...}{further arguments passed to \code{\link{ggsave}}}
+\item{add_comprehensive_view}{logical . If \code{TRUE} a comprehensive plot with panels of raster maps is presented.}
+
+\item{nrow_all, ncol_all}{number of rows and columns for frames for the comprehensive panel}
+
+\item{width, height, limitsize, dpi, units, create.dir, ...}{further arguments passed to \code{\link[ggplot2]{ggsave}} (see defailt values in function usage)}
+
+\item{width_panel, height_panel}{width and height of a single panal within a comprehensive (frame) plot.}
 }
 \description{
 SPI / SPEI index  (see lmomPi implementation)  Climate Variability Analysis in Spatial Gridded Coverage (visualization)
@@ -52,9 +69,9 @@ SPI / SPEI index  (see lmomPi implementation)  Climate Variability Analysis in S
 
 library(magrittr)
 library(terracliva)
-library(lmomPi)
+###library(lmomPi)
 library(sf)
-
+library(terra)
 
 years <- 1982:2023
 dataset_monthly <- system.file("ext_data/mekrou/CHIRPS_StackMekrou.nc",package="terraclivaviz")
@@ -70,9 +87,11 @@ outspi <- spiapprast(x=dataset_monthly,distrib="pe3",summary_regress=TRUE,add_ca
 
 filenames <- system.file(package="terraclivaviz") \%>\% 
  file.path("examples/plot/spi/spi_mekrow_\%s.jpg")
+ 
+ 
 out <- spiapprastviz(x=outspi,filenames=filenames,
  sf=dataset_sf,signif=0.1,
- write_tif=TRUE,month=6:10)
+ write_tif=TRUE,month=6:10,dpi=300,limitsize=FALSE,units="mm",add_spatial_statistics=FALSE)
 
 
 }

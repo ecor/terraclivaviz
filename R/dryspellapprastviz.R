@@ -11,7 +11,7 @@ NULL
 #' @param summary_suffixes suffixes used for summary/regression functions (see \code{\link{regress}})
 #' @param mask logical If it is \code{TRUE} only the area within the \code{sf} shape is visualized. Default is \code{FALSE}
 #' @param write_tif logical. Default is \code{FALSE}. If \code{TRUE}, results are also written and saved as GeoTiff raster files.
-#' @param ... further arguments passed to \code{\link{ggsave}}
+#' @param create.dir,... further arguments passed to \code{\link[ggplot2]{ggsave}}
 #'
 #' 
 #' @export
@@ -54,7 +54,7 @@ NULL
 
 
 
-dryspellapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_settings_enexus.xml",package="terraclivaviz"),fun_aggr=terracliva::aggr_fun_suffixes(),summary_suffixes=c("pvalue","coeff","stdrerror","rsquared","senslope","pvalue_mk"),mask=FALSE,write_tif=FALSE,...){
+dryspellapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_settings_enexus.xml",package="terraclivaviz"),fun_aggr=terracliva::aggr_fun_suffixes(),summary_suffixes=c("pvalue","coeff","stdrerror","rsquared","senslope","pvalue_mk"),mask=FALSE,write_tif=FALSE,create.dir=TRUE,...){
   
   ## TO DO 
   #### https://en.wikipedia.org/wiki/Data_and_information_visualization
@@ -125,7 +125,7 @@ dryspellapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_
     print(colors)
     gg <- gg+scale_fill_gradientn(colors=colors,na.value=NA)
     filename=str_replace_all(filenames[it]," ","_")
-    ggsave(filename=filename,plot=gg,...)
+    ggsave(filename=filename,plot=gg,create.dir=create.dir,...)
     
     if (write_tif) {
       

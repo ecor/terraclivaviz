@@ -71,6 +71,9 @@
         <colorscale>YlOrRd</colorscale>
         <rev>1</rev>
         <code_fun>hwmid</code_fun>
+        <value_max>50</value_max>
+        <value_zero>0</value_zero>
+        <value_min>0</value_min>
     </record>
     <record>
         <id>hwmid_regress</id>
@@ -79,6 +82,9 @@
         <colorscale>YlOrRd</colorscale>
         <rev>1</rev>
         <code_fun>hwmid</code_fun>
+        <value_max>NULL</value_max>
+        <value_zero>NULL</value_zero>
+        <value_min>NULL</value_min>
     </record>
     <record>
         <id>dryspell_year</id>

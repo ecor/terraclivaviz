@@ -13,9 +13,10 @@ NULL
 #' @param add_spatial_statistics  logical. If \code{TRUE} spatial statistics are calculated on the areas/polygons of \code{sf} geospatial vector object.
 #' @param id.name id name in \code{sf} for each areas/polygons. 
 #' @param month months to be selected for spatial stastics.
-#' 
-#'
-#' @param ... further arguments passed to \code{\link{ggsave}}
+#' @param add_comprehensive_view logical . If \code{TRUE} a comprehensive plot with panels of raster maps is presented. 
+#' @param nrow_all,ncol_all number of rows and columns for frames for the comprehensive panel
+#' @param width_panel,height_panel width and height of a single panal within a comprehensive (frame) plot.
+#' @param width,height,limitsize,dpi,units,create.dir,... further arguments passed to \code{\link[ggplot2]{ggsave}} (see defailt values in function usage)
 #'
 #' 
 #' @export
@@ -23,8 +24,8 @@ NULL
 #' @note \code{x} must have the proper time aggregation for the analysis before the execution of this function.
 #' 
 #' @importFrom stringr str_replace_all
-#' @importFrom terra writeRaster
-#' @importFrom ggplot2 scale_fill_gradient2
+#' @importFrom terra writeRaster nlyr
+#' @importFrom ggplot2 scale_fill_gradient2 facet_wrap
 #' @importFrom rlang .data
 #' @importFrom data.table as.data.table rbindlist melt
 #' @importFrom dplyr select filter arrange full_join
@@ -33,18 +34,17 @@ NULL
 #' @importFrom utils write.table
 #' @importFrom stringr str_trim str_split
 #' @importFrom magrittr %>%
+#' @importFrom raster extension extension<-  
 #' 
 #' 
-#' 
-
 #' 
 #' @examples 
 #' 
 #' library(magrittr)
 #' library(terracliva)
-#' library(lmomPi)
+#' ###library(lmomPi)
 #' library(sf)
-#' 
+#' library(terra)
 #' 
 #' years <- 1982:2023
 #
@@ -61,9 +61,11 @@ NULL
 #' 
 #' filenames <- system.file(package="terraclivaviz") %>% 
 #'  file.path("examples/plot/spi/spi_mekrow_%s.jpg")
+#'  
+#'  
 #' out <- spiapprastviz(x=outspi,filenames=filenames,
 #'  sf=dataset_sf,signif=0.1,
-#'  write_tif=TRUE,month=6:10)
+#'  write_tif=TRUE,month=6:10,dpi=300,limitsize=FALSE,units="mm",add_spatial_statistics=FALSE)
 #' 
 #'
 
@@ -74,7 +76,9 @@ NULL
 
 
 
-spiapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_settings_enexus.xml",package="terraclivaviz"),signif=attr(x,"signif"),mask=FALSE,write_tif=FALSE,add_spatial_statistics=!is.null(attr(x,"spi_cat")),id.name="NAME",month=1:12,...){
+spiapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_settings_enexus.xml",package="terraclivaviz"),signif=attr(x,"signif"),mask=FALSE,write_tif=FALSE,add_spatial_statistics=!is.null(attr(x,"spi_cat")),id.name="NAME",month=1:12,add_comprehensive_view=TRUE,nrow_all=NULL,ncol_all=length(month), width = NA,
+                          height = NA, width_panel = width,
+                          height_panel = height,limitsize=FALSE,dpi=300,units="mm",create.dir=TRUE,...){
   
   ## TO DO 
   #### https://en.wikipedia.org/wiki/Data_and_information_visualization
@@ -123,7 +127,11 @@ spiapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_
   
   if (length(filenames)==1) filenames <- sprintf(filenames,names(x))
   names(filenames) <- names(x)
-  for (it in names(x)) {
+  #####   SPIAPPRASTVIZ insert here a unnique_plot TO DO 
+  #####
+  
+  
+ for (it in names(x)) {
     
     
     
@@ -134,8 +142,8 @@ spiapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_
     gg <- gg+ggtitle(it)
     print(settings_list)
     colorscale <- settings_list[[nn2[it]]][["colorscale"]]
-    print("nn2:")
-    print(nn2)
+    ####print("nn2:")
+    ####print(nn2)
     print("it:")
     print(it)
     
@@ -146,9 +154,9 @@ spiapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_
     color_min <- settings_list[[nn2[it]]][["color_min"]]  |> str_trim()
     color_zero <- settings_list[[nn2[it]]][["color_zero"]]  |> str_trim()
     ###
-    value_max <- settings_list[[nn2[it]]][["value_max"]]
-    value_min <- settings_list[[nn2[it]]][["value_min"]]
-    value_zero <- settings_list[[nn2[it]]][["value_zero"]]
+    value_max <- settings_list[[nn2[it]]][["value_max"]] 
+    value_min <- settings_list[[nn2[it]]][["value_min"]] 
+    value_zero <- settings_list[[nn2[it]]][["value_zero"]] 
     
     if (value_zero=="signif") value_zero <- signif
     
@@ -160,13 +168,13 @@ spiapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_
     rev <- as.numeric(settings_list[[nn2[it]]][["rev"]])
     colors <-   colorRampPalette(brewer.pal(9,colorscale))(9)
     if (rev<0) colors <- rev(colors)
-    print(colors)
+    ##print(colors)
    ## gg <- gg+scale_fill_gradientn(colors=colors,na.value=NA)
     midpoint=0 
     #if (it=="pvalue") midpoint=signif
     gg <- gg+scale_fill_gradient2(high=color_max,low=color_min,mid=color_zero,midpoint=midpoint,na.value=NA,limits=limits)
     filename=str_replace_all(filenames[it]," ","_")
-    ggsave(filename=filename,plot=gg,...)
+    ggsave(filename=filename,plot=gg,width=width,height=height,limitsize=limitsize,dpi=dpi,units=units,create.dir=create.dir,...)
     
     if (write_tif) {
       
@@ -176,6 +184,87 @@ spiapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_
       
     }
     out <- filenames
+  }
+  
+  if (add_comprehensive_view) {
+   
+
+    mm <- str_detect(names(x),"_on_") 
+    xvv <- x[[mm]]
+    terra::time(xvv) <- names(xvv) |> str_split("_on_") |> sapply(function(x){x[[2]]}) |> paste0("_01") |> 
+      as.Date(format="%Y_%m_%d")
+    
+    xvv <- xvv[[which(lubridate::month(terra::time(xvv)) %in% month)]]
+    if (is.null(ncol_all)) ncol_all <- NA
+    if (is.null(nrow_all)) nrow_all <- NA 
+    ####
+    if (is.na(ncol_all))  ncol_all <- length(month)  
+    if (is.na(nrow_all))  {
+      nrow_all <- ceiling(nlyr(xvv)/ncol_all)
+    } else {
+      ncol_all <- ceiling(nlyr(xvv)/nrow_all)
+      
+    }
+    
+    #### EDIT COLOR SCALE
+    ####
+    ###
+    it <- 1 
+    color_max <- settings_list[[nn2[it]]][["color_max"]] |> str_trim()
+    color_min <- settings_list[[nn2[it]]][["color_min"]]  |> str_trim()
+    color_zero <- settings_list[[nn2[it]]][["color_zero"]]  |> str_trim()
+    ###
+    value_max <- settings_list[[nn2[it]]][["value_max"]] |> as.numeric()
+    value_min <- settings_list[[nn2[it]]][["value_min"]] |> as.numeric()
+    value_zero <- settings_list[[nn2[it]]][["value_zero"]] |> as.numeric()
+    ####
+    midpoint <- value_zero 
+    limits <- c(value_min,value_max)
+    print(midpoint)
+    print(limits)
+    ###
+    gga  <- ggplot()+geom_spatraster(data=xvv)+theme_bw()
+    gga <-  gga+facet_wrap(~lyr,nrow=nrow_all,ncol=ncol_all)
+    gga <-  gga+geom_sf(data=sf,fill=NA,color="black",linewidth=0.15)
+   ##  gga <-  gga+ggtitle(it)
+   ## gga <- gga+ggplot2::theme(text = ggplot2::element_text(size = 1),axis.text.x=ggplot2::element_text(size = 1),legend.text=ggplot2::element_text(size = 1),legend.direction="vertical",legend.position="right",legend.title = ggplot2::element_blank(),legend.title.align=0)
+    gga <- gga+scale_fill_gradient2(high=color_max,low=color_min,mid=color_zero,midpoint=midpoint,na.value=NA,limits=limits)
+   
+    filename_comprehensive_view <- str_split(filenames[[1]],"_on_",n=2) |> sapply(FUN=function(x){x[[1]]}) |> paste0("_comprehenive.png")
+    raster::extension(filename_comprehensive_view) <- raster::extension(filenames[1])
+    width_panel <- width
+    height_panel <- height
+    aspv <- nrow(xvv)/ncol(xvv)
+    if (length(width_panel)==0) width_panel <- NA 
+    if (is.na(width_panel))  width_panel <- 500/dpi*25.4
+    if (length(height_panel)==0) height_panel <- NA 
+    if (is.na(height_panel)) {
+      height_panel <- width_panel*aspv 
+    } else {
+      width_panel <- height_panel/aspv 
+    }
+    ###
+    # print(xvv)
+    # print(aspv)
+    # print(nrow_all)
+    # print(ncol_all)
+    # print(width_panel)
+    # print(height_panel)
+    
+    nrow_all <- nrow_all
+    ncol_all <- ncol_all
+    width_all2  <- width_panel*ncol_all
+    height_all2 <- height_panel*nrow_all
+    ###
+    
+    print(width_all2)
+    print(height_all2)
+    ggplot2::ggsave(filename=filename_comprehensive_view,plot=gga,width=ceiling(width_all2),height=ceiling(height_all2),limitsize=limitsize,dpi=dpi,units=units,create.dir=create.dir,...) ##... ,units="in",dpi=300) ###,...)
+    
+    ##ggplot2::ggsave(filename=filename_comprehensive_view,plot=gga,width=ceiling(width_all2),height=ceiling(height_all2),limitsize=FALSE,dpi=dpi,...) units="in",dpi=300) ###,...)
+    
+    
+    
   }
     if (add_spatial_statistics) {
       
@@ -315,7 +404,8 @@ spiapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_
       ####
       file_area_png <- file_area_png |> paste0(sprintf("_spi%02d_cat_percentage_area_%s.png",spi.scale,monsel))
       region_names=unique(uu1$toponym)
-      ggplot2::ggsave(filename=file_area_png,plot=pp,width=297*2,height=210*length(region_names)/2,units="mm",limitsize=FALSE)  ## A4 210 * 297
+      raster::extension(file_area_png) <- raster::extension(filenames[1]) ## EC 20250703 
+      ggplot2::ggsave(filename=file_area_png,plot=pp,width=297*2,height=ceiling(210*length(region_names)/2),units="mm",limitsize=FALSE,create.dir = create.dir)  ## A4 210 * 297
       ####
       #   
       #   if(length(group_reg) == length(region_names))
