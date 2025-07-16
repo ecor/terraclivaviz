@@ -59,15 +59,13 @@ NULL
 #' outspi <- spiapprast(x=dataset_monthly,distrib="pe3",summary_regress=TRUE,add_cat=TRUE,spi.scale=1)
 #' 
 #' 
-#' filenames <- system.file(package="terraclivaviz") %>% 
-#'  file.path("examples/plot/spi/spi_mekrow_%s.jpg")
-#' filenames <- "/home/ecor/local/rpackages/jrc/terraclivaviz_examples/examples/plot/spi/spi_mekrow_%s.jpg"
+#' filenames <- system.file(package="terraclivaviz") %>% file.path("examples/plot/spi/spi_mekrou_%s.jpg")
 #'  
 #' out <- spiapprastviz(x=outspi,filenames=filenames,
 #'  sf=dataset_sf,signif=0.1,
 #'  write_tif=TRUE,month=6:10,dpi=300,limitsize=FALSE,units="mm",add_spatial_statistics=TRUE)
 #'
-#' filenames2 <- "/home/ecor/local/rpackages/jrc/terraclivaviz_examples/examples/plot/spi_regions/spi_mekrow_%s.jpg"
+#' filenames2 <- system.file(package="terraclivaviz") %>% file.path("examples/plot/spi_regions/spi_mekrou_%s.jpg")
 #'  
 #' out2 <- spiapprastviz(x=outspi,filenames=filenames2,
 #'  sf=dataset_sf,signif=0.1,
