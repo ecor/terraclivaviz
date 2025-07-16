@@ -15,6 +15,7 @@ spiapprastviz(
   write_tif = FALSE,
   add_spatial_statistics = !is.null(attr(x, "spi_cat")),
   id.name = "NAME",
+  sel_regions = NA,
   month = 1:12,
   add_comprehensive_view = TRUE,
   nrow_all = NULL,
@@ -49,6 +50,8 @@ spiapprastviz(
 
 \item{id.name}{id name in \code{sf} for each areas/polygons.}
 
+\item{sel_regions}{selected regions/areas/polygons to display (optional), otherwise all regionsare displayed.}
+
 \item{month}{months to be selected for spatial stastics.}
 
 \item{add_comprehensive_view}{logical . If \code{TRUE} a comprehensive plot with panels of raster maps is presented.}
@@ -69,7 +72,6 @@ SPI / SPEI index  (see lmomPi implementation)  Climate Variability Analysis in S
 
 library(magrittr)
 library(terracliva)
-###library(lmomPi)
 library(sf)
 library(terra)
 
@@ -87,11 +89,18 @@ outspi <- spiapprast(x=dataset_monthly,distrib="pe3",summary_regress=TRUE,add_ca
 
 filenames <- system.file(package="terraclivaviz") \%>\% 
  file.path("examples/plot/spi/spi_mekrow_\%s.jpg")
- 
+filenames <- "/home/ecor/local/rpackages/jrc/terraclivaviz_examples/examples/plot/spi/spi_mekrow_\%s.jpg"
  
 out <- spiapprastviz(x=outspi,filenames=filenames,
  sf=dataset_sf,signif=0.1,
- write_tif=TRUE,month=6:10,dpi=300,limitsize=FALSE,units="mm",add_spatial_statistics=FALSE)
+ write_tif=TRUE,month=6:10,dpi=300,limitsize=FALSE,units="mm",add_spatial_statistics=TRUE)
+
+filenames2 <- "/home/ecor/local/rpackages/jrc/terraclivaviz_examples/examples/plot/spi_regions/spi_mekrow_\%s.jpg"
+ 
+out2 <- spiapprastviz(x=outspi,filenames=filenames2,
+ sf=dataset_sf,signif=0.1,
+ write_tif=TRUE,month=6:10,dpi=300,limitsize=FALSE,units="mm",add_spatial_statistics=TRUE,sel_regions=c(1,2))
+
 
 
 }

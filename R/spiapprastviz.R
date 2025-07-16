@@ -11,7 +11,8 @@ NULL
 #' @param signif significance , used to detect trend occurrence, see \code{\link{spiapprast}}.
 #' @param write_tif logical. Default is \code{FALSE}. If \code{TRUE}, results are also written and saved as GeoTiff raster files.
 #' @param add_spatial_statistics  logical. If \code{TRUE} spatial statistics are calculated on the areas/polygons of \code{sf} geospatial vector object.
-#' @param id.name id name in \code{sf} for each areas/polygons. 
+#' @param id.name id name in \code{sf} for each areas/polygons.
+#' @param sel_regions selected regions/areas/polygons to display (optional), otherwise all regionsare displayed.
 #' @param month months to be selected for spatial stastics.
 #' @param add_comprehensive_view logical . If \code{TRUE} a comprehensive plot with panels of raster maps is presented. 
 #' @param nrow_all,ncol_all number of rows and columns for frames for the comprehensive panel
@@ -42,7 +43,6 @@ NULL
 #' 
 #' library(magrittr)
 #' library(terracliva)
-#' ###library(lmomPi)
 #' library(sf)
 #' library(terra)
 #' 
@@ -61,12 +61,19 @@ NULL
 #' 
 #' filenames <- system.file(package="terraclivaviz") %>% 
 #'  file.path("examples/plot/spi/spi_mekrow_%s.jpg")
-#'  
+#' filenames <- "/home/ecor/local/rpackages/jrc/terraclivaviz_examples/examples/plot/spi/spi_mekrow_%s.jpg"
 #'  
 #' out <- spiapprastviz(x=outspi,filenames=filenames,
 #'  sf=dataset_sf,signif=0.1,
-#'  write_tif=TRUE,month=6:10,dpi=300,limitsize=FALSE,units="mm",add_spatial_statistics=FALSE)
-#' 
+#'  write_tif=TRUE,month=6:10,dpi=300,limitsize=FALSE,units="mm",add_spatial_statistics=TRUE)
+#'
+#' filenames2 <- "/home/ecor/local/rpackages/jrc/terraclivaviz_examples/examples/plot/spi_regions/spi_mekrow_%s.jpg"
+#'  
+#' out2 <- spiapprastviz(x=outspi,filenames=filenames2,
+#'  sf=dataset_sf,signif=0.1,
+#'  write_tif=TRUE,month=6:10,dpi=300,limitsize=FALSE,units="mm",add_spatial_statistics=TRUE,sel_regions=c(1,2))
+#'
+#'
 #'
 
 
@@ -75,8 +82,7 @@ NULL
 
 
 
-
-spiapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_settings_enexus.xml",package="terraclivaviz"),signif=attr(x,"signif"),mask=FALSE,write_tif=FALSE,add_spatial_statistics=!is.null(attr(x,"spi_cat")),id.name="NAME",month=1:12,add_comprehensive_view=TRUE,nrow_all=NULL,ncol_all=length(month), width = NA,
+spiapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_settings_enexus.xml",package="terraclivaviz"),signif=attr(x,"signif"),mask=FALSE,write_tif=FALSE,add_spatial_statistics=!is.null(attr(x,"spi_cat")),id.name="NAME",sel_regions=NA,month=1:12,add_comprehensive_view=TRUE,nrow_all=NULL,ncol_all=length(month), width = NA,
                           height = NA, width_panel = width,
                           height_panel = height,limitsize=FALSE,dpi=300,units="mm",create.dir=TRUE,...){
   
@@ -295,9 +301,25 @@ spiapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_
           return(list(o))
           }  
         ###
+        if (length(sel_regions)==0) sel_regions=NA
+        
+        if (!is.na(sel_regions[1])) {
+          
+          
+          if (is.character(sel_regions)) sel_regions <- which(sf[,id.name] %in% sel_regions)
+            
+            
+        } else {
+            
+            sel_regions <- TRUE
+        }
+          
+          
+        
+        
+        
        
-       
-        uuu <- terra::extract(y,y=vect(sf),fun=fun0,ncats=ncats,raw=TRUE)
+        uuu <- terra::extract(y,y=vect(sf[sel_regions,]),fun=fun0,ncats=ncats,raw=TRUE)
         uu1 <- uuu |> as.data.table() |> melt(id="ID")
         uu2 <-  lapply(uu1$value,FUN=t) |> lapply(uu1$value,FUN=as.data.table) |> rbindlist()
         uu1$variable <- str_split(as.character(uu1$variable),"[.]") |> sapply(function(x){x[1]})
