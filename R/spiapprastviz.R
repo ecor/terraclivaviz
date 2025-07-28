@@ -366,33 +366,7 @@ spiapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_
       
       
       attr(out,"spatial_stats") <- uu1
-      #####
-      
-      
-      
-      # #####
-      # 
-      # 
-      # repeat{
-      #   #cond_reg = TRUE ##spidfmm$name == reg
-      #   
-      #   group_reg = region_names[indreg]
-      #   group_reg = group_reg[which(group_reg!='NA')]
-      #   
-      #   cond_reg = spidfmm$name %in% group_reg
-      #   cond_mon = spidfmm$month %in% months_selected ###== monsel 
-      #   
-      #   if(length(which(cond_reg==TRUE))==0){ break}
-      #   
-      #   monsel <- paste(str_sub(months_selected,1,1),collapse="")
-      #   breaks_time <- seq(from=min(spidfmm$time), to=max(spidfmm$time), by = "year")
-      #   labels_time <- as.character(breaks_time,format="%Y")
-      #   spidfmm_sel=spidfmm[cond_reg & cond_mon,]
-      #   spidfmm_sel$spi_cat_id <- as.character(as.integer(spicat[spidfmm_sel$spi_cat]))
-      #   breaks_<-sort(unique(spidfmm_sel$spi_cat))
-      #   labels_ <- sapply(X=str_split(breaks_," ",n=2),FUN=function(y){y[2]})
-      #   names(col)=breaks_
-      #   
+      ## SPATTIAL STATISTIC 
       
       uuc <- uu1 |> dplyr::select(.data$category,.data$color) |> dplyr::filter(!duplicated(.data$category)) |> dplyr::arrange(.data$category)
       
@@ -426,23 +400,7 @@ spiapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_
       region_names=unique(uu1$toponym)
       raster::extension(file_area_png) <- raster::extension(filenames[1]) ## EC 20250703 
       ggplot2::ggsave(filename=file_area_png,plot=pp,width=297*2,height=ceiling(210*length(region_names)/2),units="mm",limitsize=FALSE,create.dir = create.dir)  ## A4 210 * 297
-      ####
-      #   
-      #   if(length(group_reg) == length(region_names))
-      #   {
-      #     file_area_png <- file.path(output_path,sprintf("spi%02d_cat_percentage_area_%s.png",spi.scale,monsel))
-      #   }
-      #   else
-      #   {
-      #     file_area_png <- file.path(output_path,sprintf("spi%02d_cat_percentage_area_%s_%i.png",spi.scale,monsel,i))
-      #   }
-      #   ggplot2::ggsave(filename=file_area_png,plot=pp,width=297*2,height=210*length(group_reg)/2,units="mm",limitsize=FALSE,dpi=outRes)
-      #   
-      #   
-      #   indreg = indreg + n_const
-      #   i = i + 1
-      # }
-      # setwd(output_path)
+    
     
       attr(out,"spatial_stats_plot") <- pp
       
