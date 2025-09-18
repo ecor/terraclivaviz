@@ -28,6 +28,10 @@ spiapprastviz(
   dpi = 300,
   units = "mm",
   create.dir = TRUE,
+  write_shp = TRUE,
+  spi.scale = 1,
+  spi.classes = read.table(system.file("settings/spi_class.csv", package = "terracliva"),
+    header = TRUE, sep = ",", comment.char = "?"),
   ...
 )
 }
@@ -61,6 +65,12 @@ spiapprastviz(
 \item{width, height, limitsize, dpi, units, create.dir, ...}{further arguments passed to \code{\link[ggplot2]{ggsave}} (see defailt values in function usage)}
 
 \item{width_panel, height_panel}{width and height of a single panal within a comprehensive (frame) plot.}
+
+\item{write_shp}{logical .}
+
+\item{spi.scale}{integer value. Default is 1 , it is a property of \code{x}. See \link[terracliva]{spicliva}.}
+
+\item{spi.classes}{data frame with SPI/SPEI classes (see default csv file)}
 }
 \description{
 SPI / SPEI index  (see lmomPi implementation)  Climate Variability Analysis in Spatial Gridded Coverage (visualization)
@@ -84,7 +94,7 @@ dataset_sf <- system.file("ext_data/mekrou/Mekrou_AOI/Mekrou_AOI_v3.shp",
 package="terraclivaviz") \%>\% 
  st_read()
 
-outspi <- spiapprast(x=dataset_monthly,distrib="pe3",summary_regress=TRUE,add_cat=TRUE,spi.scale=1)
+outspi <- spiapprast(x=dataset_monthly,distrib="pe3",summary_regress=TRUE,add_cat=FALSE,spi.scale=1)
 
 
 filenames <- system.file(package="terraclivaviz") \%>\% file.path("examples/plot/spi/spi_mekrou_\%s.jpg")

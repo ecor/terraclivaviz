@@ -14,7 +14,10 @@ NULL
 #' @param id.name id name in \code{sf} for each areas/polygons.
 #' @param sel_regions selected regions/areas/polygons to display (optional), otherwise all regionsare displayed.
 #' @param month months to be selected for spatial stastics.
+#' @param spi.scale integer value. Default is 1 , it is a property of \code{x}. See \link[terracliva]{spicliva}. 
+#' @param spi.classes data frame with SPI/SPEI classes (see default csv file) 
 #' @param add_comprehensive_view logical . If \code{TRUE} a comprehensive plot with panels of raster maps is presented. 
+#' @param write_shp logical . 
 #' @param nrow_all,ncol_all number of rows and columns for frames for the comprehensive panel
 #' @param width_panel,height_panel width and height of a single panal within a comprehensive (frame) plot.
 #' @param width,height,limitsize,dpi,units,create.dir,... further arguments passed to \code{\link[ggplot2]{ggsave}} (see defailt values in function usage)
@@ -25,19 +28,19 @@ NULL
 #' @note \code{x} must have the proper time aggregation for the analysis before the execution of this function.
 #' 
 #' @importFrom stringr str_replace_all
-#' @importFrom terra writeRaster nlyr
+#' @importFrom terra writeRaster nlyr classify coltab<-
 #' @importFrom ggplot2 scale_fill_gradient2 facet_wrap
 #' @importFrom rlang .data
 #' @importFrom data.table as.data.table rbindlist melt
 #' @importFrom dplyr select filter arrange full_join
-#' @importFrom terra extract levels coltab 
+#' @importFrom terra extract levels coltab time<- time 
 #' @importFrom grDevices rgb
 #' @importFrom utils write.table
 #' @importFrom stringr str_trim str_split
 #' @importFrom magrittr %>%
 #' @importFrom raster extension extension<-  
-#' 
-#' 
+#' @importFrom sf st_write
+#' @importFrom utils read.table
 #' 
 #' @examples 
 #' 
@@ -56,7 +59,7 @@ NULL
 #' package="terraclivaviz") %>% 
 #'  st_read()
 #' 
-#' outspi <- spiapprast(x=dataset_monthly,distrib="pe3",summary_regress=TRUE,add_cat=TRUE,spi.scale=1)
+#' outspi <- spiapprast(x=dataset_monthly,distrib="pe3",summary_regress=TRUE,add_cat=FALSE,spi.scale=1)
 #' 
 #' 
 #' filenames <- system.file(package="terraclivaviz") %>% file.path("examples/plot/spi/spi_mekrou_%s.jpg")
@@ -82,7 +85,8 @@ NULL
 
 spiapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_settings_enexus.xml",package="terraclivaviz"),signif=attr(x,"signif"),mask=FALSE,write_tif=FALSE,add_spatial_statistics=!is.null(attr(x,"spi_cat")),id.name="NAME",sel_regions=NA,month=1:12,add_comprehensive_view=TRUE,nrow_all=NULL,ncol_all=length(month), width = NA,
                           height = NA, width_panel = width,
-                          height_panel = height,limitsize=FALSE,dpi=300,units="mm",create.dir=TRUE,...){
+                          height_panel = height,limitsize=FALSE,dpi=300,units="mm",create.dir=TRUE,write_shp=TRUE,spi.scale=1,
+                          spi.classes=read.table(system.file("settings/spi_class.csv",package="terracliva"),header=TRUE,sep=",",comment.char="?"),...){
   
   ## TO DO 
   #### https://en.wikipedia.org/wiki/Data_and_information_visualization
@@ -92,8 +96,10 @@ spiapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_
     x <- crop(x,EE)
   }
   code_fun <- "spi"
-  spi.scale <- attr(x,"spi.scale")
-  if (length(spi.scale)==0) spi.scale <- as.numeric(NA)
+  spi.scale0 <- attr(x,"spi.scale")
+  if (length(spi.scale0)==0) spi.scale0 <- as.numeric(NA)
+  if (!is.na(spi.scale0)) spi.scale <- spi.scale0
+  
   
   if (is.character(settings)) {
     xml_settings <- settings
@@ -273,7 +279,37 @@ spiapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_
     if (add_spatial_statistics) {
       
       y <- attr(x,"spi_cat")
-   
+      ###
+      if (is.null(y)) {
+        
+        
+        ## built y 
+        spi.classes$ID <- 1:nrow(spi.classes)
+        outb <- x[[str_detect(names(x),"_on_")]]
+        rcl <- as.matrix(spi.classes[,c("min","max","ID")])
+        outc <- classify(outb,rcl=rcl[,c(1,2,3)],include.lowest=TRUE)
+        
+        for (ii in 1:nlyr(outc)) {  
+          
+          coltab(outc,layer=ii) <- spi.classes[,c("ID","color")]
+          levels(outc[[ii]]) <- spi.classes[,c("ID","name","color")]
+        }
+        names(outc) <- names(outb)
+        terra::time(outc) <- names(outb) |> str_split("_on_") |> sapply(function(p){p[[2]]}) |> paste0("_01") |> as.Date(format="%Y_%m_%d") ## EC 20250606
+      
+        
+        y <- outc
+        ###attr(out,"spi_clasess")  <- spi.classes
+        
+      }
+      
+        
+        
+        
+      
+      
+      
+      ####
       ncats <- nrow(terra::levels(y)[[1]])
       
       
@@ -404,6 +440,38 @@ spiapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_
     
       attr(out,"spatial_stats_plot") <- pp
       
+      if (write_shp) {
+        
+        ## TO IMPLEMENT 
+        sfp <- sf[sel_regions,]
+        names(sfp)[names(sfp)==id.name] <- "toponym"
+        shpout <- sfp |> full_join(attr(out,"spatial_stats")) 
+        ####
+        catids <- unique(shpout$category) 
+        names(catids) <- str_replace_all(catids," ","_")
+        ####
+        print(file_area_png)
+        file_area_shp <- file_area_png |> str_split("_cat_percentage_area_")
+        file_area_shp <- file_area_shp[[1]][1] |> paste0("_%s.shp")
+        
+        for (it in names(catids)) {
+          shp_file <- file_area_shp |> sprintf(it)
+          shp_df <- shpout[shpout$category==catids[it],]
+          st_write(shp_df,dsn=shp_file,delete_layer=TRUE)
+          
+        }
+        
+        
+        
+        attr(out,"spatial_stats_shp") <- shpout
+        
+        
+        
+        ###
+        
+        
+        
+      }
     
     
     
