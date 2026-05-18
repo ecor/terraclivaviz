@@ -19,7 +19,7 @@ NULL
 #' @param add_comprehensive_view logical . If \code{TRUE} a comprehensive plot with panels of raster maps is presented. 
 #' @param write_shp logical . 
 #' @param nrow_all,ncol_all number of rows and columns for frames for the comprehensive panel
-#' @param width_panel,height_panel width and height of a single panal within a comprehensive (frame) plot.
+#' @param width_panel,height_panel width and height of a single panel within a comprehensive (frame) plot.
 #' @param width,height,limitsize,dpi,units,create.dir,... further arguments passed to \code{\link[ggplot2]{ggsave}} (see defailt values in function usage)
 #'
 #' 
@@ -151,7 +151,9 @@ spiapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_
     gg <-  gg+geom_sf(data=sf,fill=NA,color="black",linewidth=0.15)
     gg <- gg+ggtitle(it)
     print(settings_list)
-    colorscale <- settings_list[[nn2[it]]][["colorscale"]]
+    colorscale <- settings_list[[nn2[it]]][["colorscale"]] |> str_split(",") |> unlist()
+    colors <- colorRampPalette(brewer.pal(9,colorscale))(9) |> try(silent=TRUE) 
+    if (inherits(colors,"try-error")) colors <- colorscale
     ####print("nn2:")
     ####print(nn2)
     print("it:")
@@ -176,13 +178,18 @@ spiapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_
     
     
     rev <- as.numeric(settings_list[[nn2[it]]][["rev"]])
-    colors <-   colorRampPalette(brewer.pal(9,colorscale))(9)
+   
     if (rev<0) colors <- rev(colors)
-    ##print(colors)
-   ## gg <- gg+scale_fill_gradientn(colors=colors,na.value=NA)
-    midpoint=0 
-    #if (it=="pvalue") midpoint=signif
+   
+    if (colors[1]!="") {
+      print(1)
+      gg <- gg+scale_fill_gradientn(colors=colors,na.value=NA) 
+    } else {
+    midpoint=as.numeric(value_zero)
+    
+    
     gg <- gg+scale_fill_gradient2(high=color_max,low=color_min,mid=color_zero,midpoint=midpoint,na.value=NA,limits=limits)
+    }
     filename=str_replace_all(filenames[it]," ","_")
     ggsave(filename=filename,plot=gg,width=width,height=height,limitsize=limitsize,dpi=dpi,units=units,create.dir=create.dir,...)
     
@@ -228,7 +235,7 @@ spiapprastviz <- function(x,filenames,sf,settings=system.file("settings/lm_plot_
     value_min <- settings_list[[nn2[it]]][["value_min"]] |> as.numeric()
     value_zero <- settings_list[[nn2[it]]][["value_zero"]] |> as.numeric()
     ####
-    midpoint <- value_zero 
+    midpoint <- as.numeric(value_zero) 
     limits <- c(value_min,value_max)
     print(midpoint)
     print(limits)

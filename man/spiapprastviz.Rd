@@ -64,7 +64,7 @@ spiapprastviz(
 
 \item{width, height, limitsize, dpi, units, create.dir, ...}{further arguments passed to \code{\link[ggplot2]{ggsave}} (see defailt values in function usage)}
 
-\item{width_panel, height_panel}{width and height of a single panal within a comprehensive (frame) plot.}
+\item{width_panel, height_panel}{width and height of a single panel within a comprehensive (frame) plot.}
 
 \item{write_shp}{logical .}
 

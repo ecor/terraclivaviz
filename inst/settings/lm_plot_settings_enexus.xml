@@ -106,7 +106,7 @@
         <id>spi_month</id>
         <particular_id>month</particular_id>
         <name></name>
-        <colorscale>YlOrRd</colorscale>
+        <colorscale></colorscale>
         <color_max>#2F5597FF</color_max>
         <color_zero>#DBDBDBFF</color_zero>
         <color_min>#C00000FF</color_min>
