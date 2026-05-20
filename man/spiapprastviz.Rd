@@ -14,6 +14,7 @@ spiapprastviz(
   mask = FALSE,
   write_tif = FALSE,
   add_spatial_statistics = !is.null(attr(x, "spi_cat")),
+  add_spi_cat_maps = add_spatial_statistics,
   id.name = "NAME",
   sel_regions = NA,
   month = 1:12,
@@ -51,6 +52,8 @@ spiapprastviz(
 \item{write_tif}{logical. Default is \code{FALSE}. If \code{TRUE}, results are also written and saved as GeoTiff raster files.}
 
 \item{add_spatial_statistics}{logical. If \code{TRUE} spatial statistics are calculated on the areas/polygons of \code{sf} geospatial vector object.}
+
+\item{add_spi_cat_maps}{logical. If \code{TRUE} spi categorical maps are displayed.}
 
 \item{id.name}{id name in \code{sf} for each areas/polygons.}
 
