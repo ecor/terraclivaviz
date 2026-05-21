@@ -49,7 +49,7 @@
         <code_fun>lm</code_fun>
     </record>
     <record>
-        <id>lm__exc_rt</id>
+        <id>lm_exc_rt</id>
         <particular_id>_exc_rt</particular_id>
         <name></name>
         <colorscale>YlGnBu</colorscale>
@@ -57,14 +57,46 @@
         <code_fun>lm</code_fun>
     </record>
     <record>
-        <id>lm__def_rt</id>
+        <id>lm_def_rt</id>
         <particular_id>_def_rt</particular_id>
         <name></name>
         <colorscale>YlOrRd</colorscale>
         <rev>1</rev>
         <code_fun>lm</code_fun>
     </record>
-  <record>
+        <record>
+        <id>lm_exc_p_rt</id>
+        <particular_id>_exc_p_rt</particular_id>
+        <name></name>
+        <colorscale>YlGnBu</colorscale>
+        <rev>1</rev>
+        <code_fun>lm</code_fun>
+    </record>
+    <record>
+        <id>lm_def_p_rt</id>
+        <particular_id>_def_p_rt</particular_id>
+        <name></name>
+        <colorscale>YlOrRd</colorscale>
+        <rev>1</rev>
+        <code_fun>lm</code_fun>
+    </record>
+    <record>
+        <id>lm_exc_pct</id>
+        <particular_id>_exc_pct</particular_id>
+        <name></name>
+        <colorscale>YlGnBu</colorscale>
+        <rev>-1</rev>
+        <code_fun>lm</code_fun>
+    </record>
+    <record>
+        <id>lm_def_pct</id>
+        <particular_id>_def_pct</particular_id>
+        <name></name>
+        <colorscale>YlOrRd</colorscale>
+        <rev>-1</rev>
+        <code_fun>lm</code_fun>
+    </record>
+    <record>
         <id>hwmid_year</id>
         <particular_id>year</particular_id>
         <name></name>
