@@ -14,6 +14,7 @@ spiapprastviz(
   mask = FALSE,
   write_tif = FALSE,
   add_spatial_statistics = !is.null(attr(x, "spi_cat")),
+  add_spi_cat_maps = add_spatial_statistics,
   id.name = "NAME",
   sel_regions = NA,
   month = 1:12,
@@ -52,6 +53,8 @@ spiapprastviz(
 
 \item{add_spatial_statistics}{logical. If \code{TRUE} spatial statistics are calculated on the areas/polygons of \code{sf} geospatial vector object.}
 
+\item{add_spi_cat_maps}{logical. If \code{TRUE} spi categorical maps are displayed.}
+
 \item{id.name}{id name in \code{sf} for each areas/polygons.}
 
 \item{sel_regions}{selected regions/areas/polygons to display (optional), otherwise all regionsare displayed.}
@@ -64,7 +67,7 @@ spiapprastviz(
 
 \item{width, height, limitsize, dpi, units, create.dir, ...}{further arguments passed to \code{\link[ggplot2]{ggsave}} (see defailt values in function usage)}
 
-\item{width_panel, height_panel}{width and height of a single panal within a comprehensive (frame) plot.}
+\item{width_panel, height_panel}{width and height of a single panel within a comprehensive (frame) plot.}
 
 \item{write_shp}{logical .}
 
