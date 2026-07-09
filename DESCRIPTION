@@ -11,7 +11,7 @@ Repository: Github
 Depends: tidyterra,terracliva,lmomPi,sf
 Imports: stringr,ggplot2,xml2,RColorBrewer,terra,raster,lattice,rasterVis,latticeExtra,sp,magrittr,data.table,dplyr,rlang,lubridate
 Suggests: svglite
-RoxygenNote: 7.3.2
 NeedsCompilation: no
 Packaged: 2017-11-28 15:32:55 UTC; cordaem
 Date/Publication: 2017-11-29 14:31:45 UTC
+Config/roxygen2/version: 8.0.0

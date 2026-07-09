@@ -43,6 +43,9 @@ NULL
 #' 
 #' 
 #' library(sf)
+#' library(terra)
+#' library(magrittr)
+#' library(terracliva)
 #' 
 #' years <- 1982:2023
 #'
@@ -140,6 +143,8 @@ lmapprastviz <- function(x,filenames,sf,distrib=eval(formals(lmomPi::pel)$distri
   ilnx <- which(nn %in% names(settings_list))
   iexc <- which(str_detect(nn,"_exc_rt"))
   idef <- which(str_detect(nn,"_def_rt"))
+  iexc_perc <- which(str_detect(nn,"_exc_perc_rt"))
+  idef_perc <- which(str_detect(nn,"_def_perc_rt"))
   print(distrib)
   for (ndistrib in distrib) {
     
@@ -150,6 +155,9 @@ lmapprastviz <- function(x,filenames,sf,distrib=eval(formals(lmomPi::pel)$distri
 
   nn2[iexc] <- "_exc_rt"
   nn2[idef] <- "_def_rt"
+  nn2[iexc_perc] <- "_exc_perc_rt"
+  nn2[idef_perc] <- "_def_perc_rt"
+  
   
   names(nn2) <- names(x)
   #####
@@ -164,17 +172,27 @@ lmapprastviz <- function(x,filenames,sf,distrib=eval(formals(lmomPi::pel)$distri
   for (it in names(x)) {
    
     if (use_ggplot2) {
+      
+      value_max <- as.numeric(settings_list[[nn2[it]]][["value_max"]])
+      value_min <- as.numeric(settings_list[[nn2[it]]][["value_min"]])
+      limits <- c(value_max,value_min)
+      
+      
       gg  <- ggplot()+geom_spatraster(data=x[[it]])+theme_bw()
       gg <-  gg+geom_sf(data=sf,fill=NA,color="black",linewidth=0.15)
       gg <- gg+ggtitle(it)
-    
+      
+      
+      
       colorscale <- settings_list[[nn2[it]]][["colorscale"]]
-      ##print(colorscale)
+      print(it)
+      print(nn2[it])
+      print(colorscale)
       rev <- as.numeric(settings_list[[nn2[it]]][["rev"]])
       colors <-   colorRampPalette(brewer.pal(9,colorscale))(9)
       if (rev<0) colors <- rev(colors)
-      print(colors)
-      gg <- gg+scale_fill_gradientn(colors=colors,na.value=NA)
+      print(colors) ## insert limit here 
+      gg <- gg+scale_fill_gradientn(colors=colors,na.value=NA,limits=limits)
       filename=str_replace_all(filenames[it]," ","_")
     ####gg <- gg++theme(plot.margin = unit(c(0, 0, 0, 0), "cm"))
       ggsave(filename=filename,plot=gg,create.dir=create.dir,...)
