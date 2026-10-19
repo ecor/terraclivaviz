@@ -7,6 +7,9 @@
         <colorscale>YlGnBu</colorscale>
         <rev>1</rev>
         <code_fun>lm</code_fun>
+        <value_max>NA</value_max>
+        <value_zero>NA</value_zero>
+        <value_min>NA</value_min>
     </record>
     <record>
         <id>lm_l_2</id>
@@ -15,30 +18,54 @@
         <colorscale>YlGnBu</colorscale>
         <rev>1</rev>
         <code_fun>lm</code_fun>
+        <value_max>NA</value_max>
+        <value_zero>NA</value_zero>
+        <value_min>NA</value_min>
     </record>
     <record>
         <id>lm_t</id>
         <particular_id>t</particular_id>
         <name>L-CV(2nd L-Moment t)</name>
-        <colorscale>YlGnBu</colorscale>
+        <colorscale>PuOr</colorscale>
         <rev>1</rev>
         <code_fun>lm</code_fun>
+        <value_max>1</value_max>
+        <value_zero>0</value_zero>
+        <value_min>0</value_min>
+    </record>
+     <record>
+        <id>lm_l_cv</id>
+        <particular_id>l_cv</particular_id>
+        <name>L-CV(2nd L-Moment t)</name>
+        <colorscale>PuOr</colorscale>
+        <rev>1</rev>
+        <code_fun>lm</code_fun>
+        <value_max>1</value_max>
+        <value_zero>0</value_zero>
+        <value_min>0</value_min>
     </record>
     <record>
         <id>lm_t_3</id>
         <particular_id>t_3</particular_id>
         <name>L-skewness(3rd L-Moment t_3)</name>
-        <colorscale>YlGnBu</colorscale>
+        <colorscale>PuOr</colorscale>
         <rev>1</rev>
         <code_fun>lm</code_fun>
+        <value_max>1</value_max>
+        <value_zero>0</value_zero>
+        <value_min>-1</value_min>
     </record>
     <record>
         <id>lm_t_4</id>
         <particular_id>t_4</particular_id>
         <name>L-kurtosis(4rd L-Moment t_4)</name>
-        <colorscale>YlGnBu</colorscale>
+        <colorscale>PuOr</colorscale>
         <rev>1</rev>
         <code_fun>lm</code_fun>
+        <code_fun>lm</code_fun>
+        <value_max>1</value_max>
+        <value_zero>0</value_zero>
+        <value_min>-1</value_min>
     </record>
     <record>
         <id>lm_distrib</id>
@@ -47,6 +74,9 @@
         <colorscale>YlGnBu</colorscale>
         <rev>1</rev>
         <code_fun>lm</code_fun>
+        <value_max>NA</value_max>
+        <value_zero>NA</value_zero>
+        <value_min>NA</value_min>
     </record>
     <record>
         <id>lm_exc_rt</id>
@@ -55,6 +85,9 @@
         <colorscale>YlGnBu</colorscale>
         <rev>1</rev>
         <code_fun>lm</code_fun>
+        <value_max>NA</value_max>
+        <value_zero>NA</value_zero>
+        <value_min>NA</value_min>
     </record>
     <record>
         <id>lm_def_rt</id>
@@ -63,22 +96,31 @@
         <colorscale>YlOrRd</colorscale>
         <rev>1</rev>
         <code_fun>lm</code_fun>
+        <value_max>NA</value_max>
+        <value_zero>NA</value_zero>
+        <value_min>NA</value_min>
     </record>
         <record>
-        <id>lm_exc_p_rt</id>
-        <particular_id>_exc_p_rt</particular_id>
+        <id>lm_exc_perc_rt</id>
+        <particular_id>_exc_perc_rt</particular_id>
         <name></name>
         <colorscale>YlGnBu</colorscale>
         <rev>1</rev>
         <code_fun>lm</code_fun>
+        <value_max>100</value_max>
+        <value_zero>0</value_zero>
+        <value_min>0</value_min>
     </record>
     <record>
-        <id>lm_def_p_rt</id>
-        <particular_id>_def_p_rt</particular_id>
+        <id>lm_def_perc_rt</id>
+        <particular_id>_def_perc_rt</particular_id>
         <name></name>
         <colorscale>YlOrRd</colorscale>
         <rev>1</rev>
         <code_fun>lm</code_fun>
+        <value_max>100</value_max>
+        <value_zero>0</value_zero>
+        <value_min>0</value_min>
     </record>
     <record>
         <id>lm_exc_pct</id>
@@ -87,6 +129,9 @@
         <colorscale>YlGnBu</colorscale>
         <rev>-1</rev>
         <code_fun>lm</code_fun>
+        <value_max>NA</value_max>
+        <value_zero>NA</value_zero>
+        <value_min>NA</value_min>
     </record>
     <record>
         <id>lm_def_pct</id>
@@ -95,6 +140,9 @@
         <colorscale>YlOrRd</colorscale>
         <rev>-1</rev>
         <code_fun>lm</code_fun>
+        <value_max>NA</value_max>
+        <value_zero>NA</value_zero>
+        <value_min>NA</value_min>
     </record>
     <record>
         <id>hwmid_year</id>

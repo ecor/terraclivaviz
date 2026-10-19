@@ -53,6 +53,9 @@ Precipitation Deficit with L-Moments  Climate Variability Analysis in Spatial Gr
 
 
 library(sf)
+library(terra)
+library(magrittr)
+library(terracliva)
 
 years <- 1982:2023
 
