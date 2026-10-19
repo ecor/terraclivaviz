@@ -48,6 +48,5 @@ po/*~
 # RStudio Connect folder
 rsconnect/
 
-# test files
-test.R
-test/
+# draft files
+draft/
