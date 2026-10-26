@@ -8,9 +8,8 @@ library(terraclivaviz)
 # library(sf)
 # library(RColorBrewer)
 # library(rasterVis)
-source('test/plot_title.R')
-source("test/climvar_enexus.R")
-source("test/terraclivaviz_enexus.R")
+source("inst/test_enexus/climvar_enexus.R")
+source("inst/test_enexus/terraclivaviz_enexus.R")
 
 KtoC = TRUE
 KtoC = FALSE
@@ -668,7 +667,8 @@ maxcol <- 255
 col <- rgb(red=red,green=green,blue=blue,alpha=maxcol,names=names(red),maxColorValue=maxcol)
 spi_class$color = col
 ###############
-
+filename_spi <- file.path(startDir,sprintf("dry_spell_%i_%i.tif",i,h))
+filename_spi <- file.path(startDir,"dry_spell.tif")
 # outspi <- spiapprast(x=dataset_monthly,distrib="pe3",summary_regress=TRUE,add_cat=TRUE,spi.scale=1)
 outspi <- spiapprast(x=dataset_monthly,distrib="pe3",summary_regress=TRUE,add_cat=TRUE,spi.scale=3,
                      spi.classes = spi_class, timex_ref = time_ref)

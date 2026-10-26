@@ -1,6 +1,6 @@
 
 
-run_lmapprast_excdef <- function(inputFile,inputShape,startDir,step ="year",start_date,end_date,rt_years=c(2,5,10,20,50),pcts=c(5,10,15,20,30,40),distrib="pe3",mon_vec=1:12,clipByShape=FALSE,frame_bf=5)
+run_lmapprast_excdef <- function(inputFile,inputShape,startDir,step ="year",start_date,end_date,rt_years=c(2,5,10,20,50),pcts=c(5,10,15,20,30,40),distrib="pe3",mon_vec=1:12,clipByShape=FALSE,frame_bf=5,create_tif_file=FALSE)
 {
   
   settings = system.file("settings/lm_plot_settings_enexus.xml",package="terraclivaviz")
@@ -40,12 +40,14 @@ run_lmapprast_excdef <- function(inputFile,inputShape,startDir,step ="year",star
     dataset_in <- dataset_monthlysum %>% rast()
     out_dir = file.path(startDir,"lm_monthly")
     lm_ind = "monthly"
+    filename = file.path(out_dir,"lm_monthly_excdef.tif")
   }else{
     dataset_in <- mergeMonthly(year_sel, dataset_monthlysum, time_sel,'sum') %>% rast()
     out_dir = file.path(startDir,"lm_yearly")
     lm_ind = 1
+    filename = file.path(out_dir,"lm_yearly_excdef.tif")
   }
-  
+  if(!create_tif_file) filename = ""
   rm(dataset_monthlysum)
   
   dataset_sf <- inputShape %>% sf::st_read()
@@ -56,14 +58,14 @@ run_lmapprast_excdef <- function(inputFile,inputShape,startDir,step ="year",star
   if(!dir.exists(out_dir)) dir.create(out_dir)
   
   filenames <- file.path(out_dir,"lm_%s.png")
-  out_data <- lmapprast(dataset_in,index=lm_ind,distrib=distrib,rt=rt_years,pcts=pcts,add_t=TRUE,return_as_precipitation=FALSE)
+  out_data <- lmapprast(dataset_in,index=lm_ind,distrib=distrib,rt=rt_years,pcts=pcts,add_t=TRUE,return_as_precipitation=FALSE,filename=filename)
   out_data_viz <- lmapprastviz_enexus(x=out_data,filenames,sf=dataset_sf,settings=settings,rt_only=FALSE,use_levelplot=TRUE,mask=clipByShape,
                                       write_tif=TRUE,mon_vec=mon_vec,t_name=t_name, unit=unit, width=2800, height=1500, units='px', res=300)
   
 }
 
 
-run_lmapprast_rt <- function(inputFile,inputShape,startDir,step ="year",start_date,end_date,rt_years=c(2,5,10,20,50),distrib="pe3",KtoC,type,mon_vec=1:12,monthly_data=(step == "month"),clipByShape=FALSE,frame_bf=5)
+run_lmapprast_rt <- function(inputFile,inputShape,startDir,step ="year",start_date,end_date,rt_years=c(2,5,10,20,50),distrib="pe3",KtoC,type,mon_vec=1:12,monthly_data=(step == "month"),clipByShape=FALSE,frame_bf=5,create_tif_file=FALSE)
 {
   if(type == 'T'){
     settings=system.file("settings/lm_plot_settings_enexus_tmp.xml",package="terraclivaviz")
@@ -106,12 +108,14 @@ run_lmapprast_rt <- function(inputFile,inputShape,startDir,step ="year",start_da
   {
     out_dir = file.path(startDir,"lm_monthly")
     lm_ind = "monthly"
+    filename = file.path(out_dir,"lm_monthly_rp.tif")
   }else if(step == 'year'){
     
     out_dir = file.path(startDir,"lm_yearly")
     lm_ind = 1
+    filename = file.path(out_dir,"lm_yearly_rp.tif")
   }
-  
+  if(!create_tif_file) filename = ""
   if(KtoC) dataset_in <- dataset_in -273.15
   
   dataset_sf <- inputShape %>% sf::st_read()
@@ -124,14 +128,14 @@ run_lmapprast_rt <- function(inputFile,inputShape,startDir,step ="year",start_da
   dir.create(out_dir)
   filenames <- file.path(out_dir,"lm_%s.png")
   
-  out_data <- lmapprast(dataset_in,index=lm_ind,distrib=distrib,rt=rt_years,add_t=TRUE)
+  out_data <- lmapprast(dataset_in,index=lm_ind,distrib=distrib,rt=rt_years,add_t=TRUE,filename=filename)
   out_data_viz <- lmapprastviz_enexus(x=out_data,filenames,sf=dataset_sf,settings=settings,rt_only=TRUE,use_levelplot=TRUE,mask=clipByShape,
                                       write_tif=TRUE,mon_vec=mon_vec,t_name=t_name, unit=unit, width=2800, height=1500, units='px', res=300)
   
 }
 
 
-run_lmapprast_yearly_full <- function(inputFile,inputShape,startDir,KtoC,type,clipByShape,frame_bf=5)
+run_lmapprast_yearly_full <- function(inputFile,inputShape,startDir,KtoC,type,clipByShape,frame_bf=5,create_tif_file=FALSE)
 {
   if(type == 'T'){
     settings=system.file("settings/lm_plot_settings_enexus_tmp.xml",package="terraclivaviz")
@@ -150,16 +154,19 @@ run_lmapprast_yearly_full <- function(inputFile,inputShape,startDir,KtoC,type,cl
   terra::time(dataset_yearly) <- as.Date(names(dataset_yearly),format="X%Y.%m.%d")
   file.path(startDir,"lm_yearly") %>% dir.create()
   
+  if(create_tif_file) filename = file.path(startDir,"lm_yearly/lm_yearly_rp.tif")
+  else filename = ""
+  
   filenames <- file.path(startDir,"lm_yearly/lm_%s.png")
   
-  out_yearly <- lmapprast(dataset_yearly)
+  out_yearly <- lmapprast(dataset_yearly,filename=filename)
   
   out_yearly_viz <- lmapprastviz_enexus(x=out_yearly,filenames,sf=dataset_sf,settings = settings,use_levelplot=TRUE,mask = clipByShape,
                                         write_tif = TRUE,t_name = t_name,unit = unit,width=2800,height=1500,units='px', res=300)
 }
 
 
-run_hwmidapprast_full <- function(inputFile,inputShape,startDir,start_date,end_date,start_year_ref,end_year_ref,hwmi_thresh,KtoC,clipByShape,frame_bf=5)
+run_hwmidapprast_full <- function(inputFile,inputShape,startDir,start_date,end_date,start_year_ref,end_year_ref,hwmi_thresh,KtoC,clipByShape,frame_bf=5,create_tif_file=FALSE)
 {
   tmax_dataset_daily  <- (brick(inputFile) + 0) %>% rast()
 
@@ -174,8 +181,10 @@ run_hwmidapprast_full <- function(inputFile,inputShape,startDir,start_date,end_d
   idx_ref <- seq(as.Date(sprintf('%i-01-01',start_year_ref)),as.Date(sprintf('%i-12-31',end_year_ref)),by = "day")
   timex_sim = idx
   timex_ref = idx_ref
+  if(create_tif_file) file.path(startDir,"hwmid.tif")
+  else filename = ""
   
-  o_hw_regress <- hwmidapprast(tmax_dataset_daily,summary_regress=TRUE,timex_sim = idx,timex_ref = idx_ref,hwmid_thres=hwmi_thresh)
+  o_hw_regress <- hwmidapprast(tmax_dataset_daily,summary_regress=TRUE,timex_sim = idx,timex_ref = idx_ref,hwmid_thres=hwmi_thresh,filename=filename)
   
   filenames <- file.path(startDir,"%s.png")
   
@@ -184,7 +193,7 @@ run_hwmidapprast_full <- function(inputFile,inputShape,startDir,start_date,end_d
 }
 
 
-run_dryspellapprast_full <- function(inputFile,inputShape,startDir,start_date,end_date,mon_vec = 1:12,clipByShape=FALSE,frame_bf=5)
+run_dryspellapprast_full <- function(inputFile,inputShape,startDir,start_date,end_date,mon_vec = 1:12,clipByShape=FALSE,frame_bf=5,create_tif_file=FALSE)
 {
   fromPgsql=class(inputFile)!='character'
   
@@ -251,7 +260,7 @@ run_dryspellapprast_full <- function(inputFile,inputShape,startDir,start_date,en
       out_data_list[n] <- dryspellapprast(dataset_tmp,
                                           valmin=1,filename=filename_dry_spell,
                                           summary_regress=TRUE,fun_aggr=fun_aggr,overwrite=TRUE,months=mon_vec)
-
+      if(!create_tif_file) file.remove(filename_dry_spell)
     }
   }
   
@@ -272,7 +281,7 @@ run_dryspellapprast_full <- function(inputFile,inputShape,startDir,start_date,en
 }
 
 
-run_spiapprast_full <- function(inputFile,inputShape,startDir,start_date,end_date,start_year_ref,end_year_ref,sel_regions,region_name_field,mon_vec = 1:12, spi.scale = 3,distrib="pe3",nbigcol=2,clipByShape=FALSE,frame_bf=5)
+run_spiapprast_full <- function(inputFile,inputShape,startDir,start_date,end_date,start_year_ref,end_year_ref,sel_regions,region_name_field,mon_vec = 1:12, spi.scale = 3,distrib="pe3",nbigcol=2,clipByShape=FALSE,frame_bf=5,create_tif_file=FALSE)
 {
   fromPgsql=class(inputFile)!='character'
   
@@ -318,9 +327,11 @@ run_spiapprast_full <- function(inputFile,inputShape,startDir,start_date,end_dat
   # col <- rgb(red=red,green=green,blue=blue,alpha=maxcol,names=names(red),maxColorValue=maxcol)
   # spi_class$color = col
   ###############
+  if(create_tif_file) filename = file.path(startDir,sprintf("spi%02i.tif",spi.scale))
+  else filename = ""
   
   outspi <- spiapprast(x=dataset_in,timex = time_x, distrib=distrib,summary_regress=TRUE,add_cat=TRUE,
-                       spi.scale=spi.scale,spi.classes = spi_class, timex_ref = time_ref)
+                       spi.scale=spi.scale,spi.classes = spi_class, timex_ref = time_ref,filename=filename)
   
   filenames <- file.path(startDir,"spi_%s.jpg")
   
