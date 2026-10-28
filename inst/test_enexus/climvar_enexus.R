@@ -1,6 +1,6 @@
 
 
-run_lmapprast_excdef <- function(inputFile,inputShape,startDir,step ="year",start_date,end_date,rt_years=c(2,5,10,20,50),pcts=c(5,10,15,20,30,40),distrib="pe3",mon_vec=1:12,clipByShape=FALSE,frame_bf=5,create_tif_file=FALSE)
+run_lmapprast_excdef <- function(inputFile,inputShape,startDir,step ="year",start_date,end_date,rt_years=c(2,5,10,20,50),pcts=c(5,10,15,20,30,40),distrib="pe3",mon_vec=1:12,clipByShape=FALSE,frame_bf=5,create_tif_file=TRUE)
 {
   
   settings = system.file("settings/lm_plot_settings_enexus.xml",package="terraclivaviz")
@@ -65,7 +65,7 @@ run_lmapprast_excdef <- function(inputFile,inputShape,startDir,step ="year",star
 }
 
 
-run_lmapprast_rt <- function(inputFile,inputShape,startDir,step ="year",start_date,end_date,rt_years=c(2,5,10,20,50),distrib="pe3",KtoC,type,mon_vec=1:12,monthly_data=(step == "month"),clipByShape=FALSE,frame_bf=5,create_tif_file=FALSE)
+run_lmapprast_rt <- function(inputFile,inputShape,startDir,step ="year",start_date,end_date,rt_years=c(2,5,10,20,50),distrib="pe3",KtoC,type,mon_vec=1:12,monthly_data=(step == "month"),clipByShape=FALSE,frame_bf=5,create_tif_file=TRUe)
 {
   if(type == 'T'){
     settings=system.file("settings/lm_plot_settings_enexus_tmp.xml",package="terraclivaviz")
@@ -135,7 +135,7 @@ run_lmapprast_rt <- function(inputFile,inputShape,startDir,step ="year",start_da
 }
 
 
-run_lmapprast_yearly_full <- function(inputFile,inputShape,startDir,KtoC,type,clipByShape,frame_bf=5,create_tif_file=FALSE)
+run_lmapprast_yearly_full <- function(inputFile,inputShape,startDir,KtoC,type,clipByShape,frame_bf=5,create_tif_file=TRUe)
 {
   if(type == 'T'){
     settings=system.file("settings/lm_plot_settings_enexus_tmp.xml",package="terraclivaviz")
@@ -166,7 +166,7 @@ run_lmapprast_yearly_full <- function(inputFile,inputShape,startDir,KtoC,type,cl
 }
 
 
-run_hwmidapprast_full <- function(inputFile,inputShape,startDir,start_date,end_date,start_year_ref,end_year_ref,hwmi_thresh,KtoC,clipByShape,frame_bf=5,create_tif_file=FALSE)
+run_hwmidapprast_full <- function(inputFile,inputShape,startDir,start_date,end_date,start_year_ref,end_year_ref,hwmi_thresh,KtoC,clipByShape,frame_bf=5,create_tif_file=TRUE)
 {
   tmax_dataset_daily  <- (brick(inputFile) + 0) %>% rast()
 
@@ -181,7 +181,7 @@ run_hwmidapprast_full <- function(inputFile,inputShape,startDir,start_date,end_d
   idx_ref <- seq(as.Date(sprintf('%i-01-01',start_year_ref)),as.Date(sprintf('%i-12-31',end_year_ref)),by = "day")
   timex_sim = idx
   timex_ref = idx_ref
-  if(create_tif_file) file.path(startDir,"hwmid.tif")
+  if(create_tif_file) filename = file.path(startDir,"hwmid.tif")
   else filename = ""
   
   o_hw_regress <- hwmidapprast(tmax_dataset_daily,summary_regress=TRUE,timex_sim = idx,timex_ref = idx_ref,hwmid_thres=hwmi_thresh,filename=filename)
@@ -193,7 +193,7 @@ run_hwmidapprast_full <- function(inputFile,inputShape,startDir,start_date,end_d
 }
 
 
-run_dryspellapprast_full <- function(inputFile,inputShape,startDir,start_date,end_date,mon_vec = 1:12,clipByShape=FALSE,frame_bf=5,create_tif_file=FALSE)
+run_dryspellapprast_full <- function(inputFile,inputShape,startDir,start_date,end_date,mon_vec = 1:12,clipByShape=FALSE,frame_bf=5,create_tif_file=TRUe)
 {
   fromPgsql=class(inputFile)!='character'
   
@@ -281,7 +281,7 @@ run_dryspellapprast_full <- function(inputFile,inputShape,startDir,start_date,en
 }
 
 
-run_spiapprast_full <- function(inputFile,inputShape,startDir,start_date,end_date,start_year_ref,end_year_ref,sel_regions,region_name_field,mon_vec = 1:12, spi.scale = 3,distrib="pe3",nbigcol=2,clipByShape=FALSE,frame_bf=5,create_tif_file=FALSE)
+run_spiapprast_full <- function(inputFile,inputShape,startDir,start_date,end_date,start_year_ref,end_year_ref,sel_regions,region_name_field,mon_vec = 1:12, spi.scale = 3,distrib="pe3",nbigcol=2,clipByShape=FALSE,frame_bf=5,create_tif_file=TRUE)
 {
   fromPgsql=class(inputFile)!='character'
   
